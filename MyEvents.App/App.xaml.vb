@@ -1,67 +1,145 @@
-﻿''' <summary>
-''' Stellt das anwendungsspezifische Verhalten bereit, um die Standardanwendungsklasse zu ergänzen.
-''' </summary>
-NotInheritable Class App
-    Inherits Application
+﻿Imports System.Resources
+Imports Microsoft.EntityFrameworkCore
+Imports MyEvents.App.TelerikStrings
+Imports MyEvents.App.Views
+Imports MyEvents.ContextProvider
+Imports MyEvents.Repository
+Imports MyEvents.Repository.Sql
+Imports Telerik.UI.Xaml.Controls
+Imports Telerik.UI.Xaml.Controls.Grid
+Imports Telerik.UI.Xaml.Controls.Input
+Imports Windows.ApplicationModel.Core
+Imports Windows.ApplicationModel.Resources
+Imports Windows.Globalization
+Imports Windows.Storage
+Imports Windows.UI.Xaml.Media.Animation
 
-    ''' <summary>
-    ''' Wird aufgerufen, wenn die Anwendung durch den Endbenutzer normal gestartet wird. Weitere Einstiegspunkte
-    ''' werden verwendet, wenn die Anwendung zum Öffnen einer bestimmten Datei, zum Anzeigen
-    ''' von Suchergebnissen usw. gestartet wird.
-    ''' </summary>
-    ''' <param name="e">Details über Startanforderung und -prozess.</param>
-    Protected Overrides Sub OnLaunched(e As Windows.ApplicationModel.Activation.LaunchActivatedEventArgs)
-        Dim rootFrame As Frame = TryCast(Window.Current.Content, Frame)
 
-        ' App-Initialisierung nicht wiederholen, wenn das Fenster bereits Inhalte enthält.
-        ' Nur sicherstellen, dass das Fenster aktiv ist.
+Namespace Global.MyEvents.App
+    NotInheritable Class App
+        Inherits Application
 
-        If rootFrame Is Nothing Then
-            ' Frame erstellen, der als Navigationskontext fungiert und zum Parameter der ersten Seite navigieren
-            rootFrame = New Frame()
+        '<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
-            AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
+        Public Shared Texts As ResourceLoader = New Windows.ApplicationModel.Resources.ResourceLoader()
+        Public Const ApplicationThemeLight As Integer = 0
+        Public Const ApplicationThemeDark As Integer = 1
+        Public Shared SelectedApplicationTheme As Integer = 0
+        Public Const FirstNameLastNameFormat As Integer = 0
+        Public Const LastNameFirstNameFormat As Integer = 1
+        Public Shared SelectedNameFormat As Integer = 0
 
-            If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
-                ' TODO: Zustand von zuvor angehaltener Anwendung laden
+        ' <summary>
+        ' Pipeline for interacting with backend service Or database.
+        ' </summary>
+        Public Shared Property Repository As IMyEventsRepository
+
+        Public Sub New()
+
+            Dim settings = Windows.Storage.ApplicationData.Current.LocalSettings
+
+            'AddHandler CoreApplication.UnhandledErrorDetected, AddressOf UnhandledError
+
+            SelectedApplicationTheme = settings.Values("ApplicationTheme")
+            SelectedNameFormat = settings.Values("NameFormat")
+
+            If SelectedApplicationTheme = ApplicationThemeDark Then
+                RequestedTheme = ApplicationTheme.Dark
+            Else
+                RequestedTheme = ApplicationTheme.Light
             End If
-            ' Den Frame im aktuellen Fenster platzieren
-            Window.Current.Content = rootFrame
-        End If
 
-        If e.PrelaunchActivated = False Then
-            If rootFrame.Content Is Nothing Then
-                ' Wenn der Navigationsstapel nicht wiederhergestellt wird, zur ersten Seite navigieren
-                ' und die neue Seite konfigurieren, indem die erforderlichen Informationen als Navigationsparameter
-                ' übergeben werden
-                rootFrame.Navigate(GetType(MainPage), e.Arguments)
+            'Dim telerikTheming = DirectCast(App.Current.Resources("themeResourceInitializer"), UserThemeResources)
+            'telerikTheming.DarkResourcesPath = "GridDarkTheme.xaml"
+            'telerikTheming.LightResourcesPath = "GridLightTheme.xaml"
+
+            InitializeComponent()
+
+            UseSqlite()
+
+        End Sub
+
+        ''' <summary>
+        ''' Wird aufgerufen, wenn die Anwendung durch den Endbenutzer normal gestartet wird. Weitere Einstiegspunkte
+        ''' werden verwendet, wenn die Anwendung zum Öffnen einer bestimmten Datei, zum Anzeigen
+        ''' von Suchergebnissen usw. gestartet wird.
+        ''' </summary>
+        ''' <param name="e">Details über Startanforderung und -prozess.</param>
+        Protected Overrides Sub OnLaunched(e As Windows.ApplicationModel.Activation.LaunchActivatedEventArgs)
+
+            ' Prepare the app shell and window content.
+            Dim shell As AppShell = TryCast(Window.Current.Content, AppShell)
+            If shell Is Nothing Then
+                shell = New AppShell
+                shell.Language = ApplicationLanguages.Languages(0)
+                Window.Current.Content = shell
             End If
 
-            ' Sicherstellen, dass das aktuelle Fenster aktiv ist
+            If shell.AppFrame.Content Is Nothing Then
+                ' When the navigation stack isn't restored, navigate to the first page
+                ' suppressing the initial entrance animation.
+
+                shell.AppFrame.Navigate(GetType(EventListPage), e.Arguments,
+                    New SuppressNavigationTransitionInfo())
+            End If
+
+            GridLocalizationManager.Instance.StringLoader = New TelerikStringLoader()
+            InputLocalizationManager.Instance.StringLoader = New TelerikStringLoader()
+
             Window.Current.Activate()
-        End If
-    End Sub
 
-    ''' <summary>
-    ''' Wird aufgerufen, wenn die Navigation auf eine bestimmte Seite fehlschlägt
-    ''' </summary>
-    ''' <param name="sender">Der Rahmen, bei dem die Navigation fehlgeschlagen ist</param>
-    ''' <param name="e">Details über den Navigationsfehler</param>
-    Private Sub OnNavigationFailed(sender As Object, e As NavigationFailedEventArgs)
-        Throw New Exception("Failed to load Page " + e.SourcePageType.FullName)
-    End Sub
+            Dim titleBar = ApplicationView.GetForCurrentView().TitleBar
 
-    ''' <summary>
-    ''' Wird aufgerufen, wenn die Ausführung der Anwendung angehalten wird.  Der Anwendungszustand wird gespeichert,
-    ''' ohne zu wissen, ob die Anwendung beendet oder fortgesetzt wird und die Speicherinhalte dabei
-    ''' unbeschädigt bleiben.
-    ''' </summary>
-    ''' <param name="sender">Die Quelle der Anhalteanforderung.</param>
-    ''' <param name="e">Details zur Anhalteanforderung.</param>
-    Private Sub OnSuspending(sender As Object, e As SuspendingEventArgs) Handles Me.Suspending
-        Dim deferral As SuspendingDeferral = e.SuspendingOperation.GetDeferral()
-        ' TODO: Anwendungszustand speichern und alle Hintergrundaktivitäten beenden
-        deferral.Complete()
-    End Sub
+            titleBar.ForegroundColor = DirectCast(App.Current.Resources("MenuBarForegroundBrush"), SolidColorBrush).Color
+            titleBar.BackgroundColor = DirectCast(App.Current.Resources("MenuBarBackgroundBrush"), SolidColorBrush).Color
+            titleBar.ButtonForegroundColor = DirectCast(App.Current.Resources("MenuBarForegroundBrush"), SolidColorBrush).Color
+            titleBar.ButtonBackgroundColor = DirectCast(App.Current.Resources("MenuBarBackgroundBrush"), SolidColorBrush).Color
 
-End Class
+        End Sub
+
+        ' <summary>
+        ' Configures the app to use the Sqlite data source.
+        ' </summary>
+        Public Shared Sub UseSqlite()
+            Dim databasePath As String = ApplicationData.Current.LocalFolder.Path + "\MyBooks.db"
+            Dim dbOptions = New DbContextOptionsBuilder(Of MyEventsContext)().UseSqlite(
+            "Data Source=" + databasePath)
+            Repository = New SqlMyEventsRepository(dbOptions)
+        End Sub
+
+        ''' <summary>
+        ''' Wird aufgerufen, wenn die Navigation auf eine bestimmte Seite fehlschlägt
+        ''' </summary>
+        ''' <param name="sender">Der Rahmen, bei dem die Navigation fehlgeschlagen ist</param>
+        ''' <param name="e">Details über den Navigationsfehler</param>
+        Private Sub OnNavigationFailed(sender As Object, e As NavigationFailedEventArgs)
+            Throw New Exception("Failed to load Page " + e.SourcePageType.FullName)
+        End Sub
+
+        ''' <summary>
+        ''' Wird aufgerufen, wenn die Ausführung der Anwendung angehalten wird.  Der Anwendungszustand wird gespeichert,
+        ''' ohne zu wissen, ob die Anwendung beendet oder fortgesetzt wird und die Speicherinhalte dabei
+        ''' unbeschädigt bleiben.
+        ''' </summary>
+        ''' <param name="sender">Die Quelle der Anhalteanforderung.</param>
+        ''' <param name="e">Details zur Anhalteanforderung.</param>
+        Private Sub OnSuspending(sender As Object, e As SuspendingEventArgs) Handles Me.Suspending
+            Dim deferral As SuspendingDeferral = e.SuspendingOperation.GetDeferral()
+            ' TODO: Anwendungszustand speichern und alle Hintergrundaktivitäten beenden
+            deferral.Complete()
+        End Sub
+
+        Private Shared Sub UnhandledError(sender As Object, eventArgs As UnhandledErrorDetectedEventArgs)
+            Try
+                ' A breakpoint here Is generally uninformative
+                eventArgs.UnhandledError.Propagate()
+            Catch ex As Exception
+                ' Set a breakpoint here:
+                Debug.WriteLine("Error : " + ex.ToString)
+                Throw
+            End Try
+        End Sub
+
+    End Class
+
+End Namespace

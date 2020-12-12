@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="6a35a263-a6f7-4cad-94cf-831d8a0c7432"
-    Publisher="CN=Thomas"
-    Version="1.0.0.0" />
+    Name="16412ThomasDecker.MeineEvents"
+    Publisher="CN=1330FAFF-275D-4496-A785-CC38B2A4FE2F"
+    Version="1.0.5.0" />
 
-  <mp:PhoneIdentity PhoneProductId="6a35a263-a6f7-4cad-94cf-831d8a0c7432" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="0563cb18-c10f-404e-a6e4-8def977ddd9a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>MyEvents.App</DisplayName>
-    <PublisherDisplayName>Thomas</PublisherDisplayName>
+    <DisplayName>Meine Events</DisplayName>
+    <PublisherDisplayName>Thomas Decker</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,18 +32,14 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="MyEvents.App.App">
       <uap:VisualElements
-        DisplayName="MyEvents.App"
+        DisplayName="Meine Events"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="MyEvents.App"
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+        BackgroundColor="darkGoldenrod">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
   </Applications>
-
-  <Capabilities>
-    <Capability Name="internetClient" />
-  </Capabilities>
 </Package>

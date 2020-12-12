@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MyEvents.Repository</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="5.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyEvents.ContextProvider\MyEvents.ContextProvider.csproj" />
+    <ProjectReference Include="..\MyEvents.Models\MyEvents.Models.vbproj" />
+  </ItemGroup>
+
+</Project>

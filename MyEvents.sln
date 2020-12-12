@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MyEvents.Models", "MyEvents.Models\MyEvents.Models.vbproj", "{9EB93C6F-748E-4D7A-BA22-A0053133932E}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MyEvents.Models", "MyEvents.Models\MyEvents.Models.vbproj", "{9EB93C6F-748E-4D7A-BA22-A0053133932E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEvents.ContextProvider", "MyEvents.ContextProvider\MyEvents.ContextProvider.csproj", "{4B608D71-E025-4738-878E-10EE465C73C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyEvents.ContextProvider", "MyEvents.ContextProvider\MyEvents.ContextProvider.csproj", "{4B608D71-E025-4738-878E-10EE465C73C0}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MyEvents.App", "MyEvents.App\MyEvents.App.vbproj", "{7E2C7F1D-E7A7-4F1C-9072-8725D0B3542D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEvents.Migrations.Startup", "MyEvents.Migrations.Startup\MyEvents.Migrations.Startup.csproj", "{5A915F35-A933-4EBD-B62D-C0D18B4CBC49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyEvents.Migrations.Startup", "MyEvents.Migrations.Startup\MyEvents.Migrations.Startup.csproj", "{5A915F35-A933-4EBD-B62D-C0D18B4CBC49}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MyEvents.Repository", "MyEvents.Repository\MyEvents.Repository.vbproj", "{578A0609-BC25-4D84-9338-342B991F0BD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,26 @@ Global
 		{5A915F35-A933-4EBD-B62D-C0D18B4CBC49}.Release|x64.Build.0 = Release|Any CPU
 		{5A915F35-A933-4EBD-B62D-C0D18B4CBC49}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A915F35-A933-4EBD-B62D-C0D18B4CBC49}.Release|x86.Build.0 = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|ARM.Build.0 = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|x64.Build.0 = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Debug|x86.Build.0 = Debug|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|ARM.ActiveCfg = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|ARM.Build.0 = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|ARM64.Build.0 = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|x64.ActiveCfg = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|x64.Build.0 = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|x86.ActiveCfg = Release|Any CPU
+		{578A0609-BC25-4D84-9338-342B991F0BD8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

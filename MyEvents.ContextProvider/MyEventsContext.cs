@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace MyEvents.ContextProvider
 {
-    class MyEventsContext : DbContext
+    public class MyEventsContext : DbContext
     {
         public DbSet<Performance> Events {get; set; }
         public DbSet<Director> Directors { get; set; }
         public DbSet<Performer> Performers { get; set; }
         public DbSet<Soloist> Soloists { get; set; }
         public DbSet<Venue> Venues { get; set; }
+        public DbSet<Composer> Composers { get; set; }
 
         private bool MassUpdateMode = false;
         private bool UnsavedChangesExist = false;

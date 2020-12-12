@@ -14,16 +14,26 @@ namespace MyEvents.ContextProvider.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9");
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+
+            modelBuilder.Entity("MyEvents.Models.Composer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Composers");
+                });
 
             modelBuilder.Entity("MyEvents.Models.Director", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -33,26 +43,23 @@ namespace MyEvents.ContextProvider.Migrations
             modelBuilder.Entity("MyEvents.Models.Performance", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Contributors")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Composer");
 
-                    b.Property<string>("Director")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Contributors");
 
-                    b.Property<string>("PerformanceDate")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Director");
 
-                    b.Property<string>("Performer")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("PerformanceDate");
 
-                    b.Property<string>("Venue")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Performer");
 
-                    b.Property<string>("Work")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Type");
+
+                    b.Property<string>("Venue");
+
+                    b.Property<string>("Work");
 
                     b.HasKey("Id");
 
@@ -62,11 +69,9 @@ namespace MyEvents.ContextProvider.Migrations
             modelBuilder.Entity("MyEvents.Models.Performer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -76,11 +81,9 @@ namespace MyEvents.ContextProvider.Migrations
             modelBuilder.Entity("MyEvents.Models.Soloist", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -90,11 +93,9 @@ namespace MyEvents.ContextProvider.Migrations
             modelBuilder.Entity("MyEvents.Models.Venue", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 

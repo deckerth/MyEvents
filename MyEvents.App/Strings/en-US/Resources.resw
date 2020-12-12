@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName.Text" xml:space="preserve">
+    <value>My Events</value>
+  </data>
+  <data name="DoYouWantToSave" xml:space="preserve">
+    <value>Do you want to save your changes?</value>
+  </data>
+  <data name="ErrorInvalidDate" xml:space="preserve">
+    <value>Invalid date</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="SaveChangesButton.Label" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveChangesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="Settings.Label" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MaxHitsTextBox.Header" xml:space="preserve">
+    <value>Maximum number of hits</value>
+  </data>
+  <data name="DatabaseNotSaved" xml:space="preserve">
+    <value>The database could not be exported.</value>
+  </data>
+  <data name="DatabaseSaved" xml:space="preserve">
+    <value>The database has been successfully exported.</value>
+  </data>
+  <data name="ExportDb.Text" xml:space="preserve">
+    <value>Export database</value>
+  </data>
+  <data name="ImportDb.Text" xml:space="preserve">
+    <value>Import database</value>
+  </data>
+  <data name="ImportExport.Label" xml:space="preserve">
+    <value>Export / Import</value>
+  </data>
+  <data name="AddImport" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ImportDecision" xml:space="preserve">
+    <value>Do you want to add the imported events to the collection, or do you want to replace the collection?</value>
+  </data>
+  <data name="ReplaceCollection" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="SearchButton.Content" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="CancelEditButton.Label" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Telerik_And" xml:space="preserve">
+    <value>And</value>
+  </data>
+  <data name="Telerik_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Telerik_CaseSensitiveMode" xml:space="preserve">
+    <value>Case-sensitive mode is</value>
+  </data>
+  <data name="Telerik_ClearFilter" xml:space="preserve">
+    <value>Clear filter</value>
+  </data>
+  <data name="Telerik_Contains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="Telerik_DataOperationsButtonFilter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Telerik_DataOperationsButtonGroup" xml:space="preserve">
+    <value>Group by</value>
+  </data>
+  <data name="Telerik_DataOperationsButtonSort" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="Telerik_DataOperationsButtonUngroup" xml:space="preserve">
+    <value>Ungroup by</value>
+  </data>
+  <data name="Telerik_DateSelectorHeader" xml:space="preserve">
+    <value>Select date</value>
+  </data>
+  <data name="Telerik_DoesNotContain" xml:space="preserve">
+    <value>Does not contain</value>
+  </data>
+  <data name="Telerik_DoesNotEqualTo" xml:space="preserve">
+    <value>Is not equal to</value>
+  </data>
+  <data name="Telerik_DragToGroup" xml:space="preserve">
+    <value>Drag column title here to group</value>
+  </data>
+  <data name="Telerik_EndsWith" xml:space="preserve">
+    <value>Ends with</value>
+  </data>
+  <data name="Telerik_EqualsTo" xml:space="preserve">
+    <value>Is equal to</value>
+  </data>
+  <data name="Telerik_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Telerik_FilterButton" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Telerik_FilterHeader" xml:space="preserve">
+    <value>FILTER</value>
+  </data>
+  <data name="Telerik_IsFalse" xml:space="preserve">
+    <value>is false</value>
+  </data>
+  <data name="Telerik_IsGreaterThan" xml:space="preserve">
+    <value>Is greater than</value>
+  </data>
+  <data name="Telerik_IsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>Is greater than or equal to</value>
+  </data>
+  <data name="Telerik_IsLessThan" xml:space="preserve">
+    <value>Is less than</value>
+  </data>
+  <data name="Telerik_IsLessThanOrEqualTo" xml:space="preserve">
+    <value>Is less than or equal to</value>
+  </data>
+  <data name="Telerik_IsTrue" xml:space="preserve">
+    <value>is true</value>
+  </data>
+  <data name="Telerik_LeapYear" xml:space="preserve">
+    <value>Leap year</value>
+  </data>
+  <data name="Telerik_Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Telerik_On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="Telerik_Or" xml:space="preserve">
+    <value>Or</value>
+  </data>
+  <data name="Telerik_StartsWith" xml:space="preserve">
+    <value>Starts with</value>
+  </data>
+  <data name="ImportButton.Label" xml:space="preserve">
+    <value>Open data file</value>
+  </data>
+  <data name="RestartAppForThemeChangeRequired" xml:space="preserve">
+    <value>The appearance of the app will change after a restart of the app.</value>
+  </data>
+  <data name="SettingsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="SettingsDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SettingsDialog.Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ThemeComboBox.Header" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="ThemeDark.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ThemeLight.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="AcceptButton.Content" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="DataImport" xml:space="preserve">
+    <value>Import events</value>
+  </data>
+  <data name="ImportInfoDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ImportInfoDialog.Title" xml:space="preserve">
+    <value>Data import</value>
+  </data>
+  <data name="ImportResultAdded.Text" xml:space="preserve">
+    <value>Added titles:</value>
+  </data>
+  <data name="ImportResultDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ImportResultDialog.Title" xml:space="preserve">
+    <value>Data import</value>
+  </data>
+  <data name="ImportResultSkipped.Text" xml:space="preserve">
+    <value>Already existing events:</value>
+  </data>
+  <data name="ImportResultSummary" xml:space="preserve">
+    <value>&amp; events processed.</value>
+  </data>
+  <data name="ImportResultSummarySingular" xml:space="preserve">
+    <value>One event processed.</value>
+  </data>
+  <data name="ImportResultUpdated.Text" xml:space="preserve">
+    <value>Updated events:</value>
+  </data>
+  <data name="SelectAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="TextPatternBox.PlaceholderText" xml:space="preserve">
+    <value>Search pattern</value>
+  </data>
+  <data name="AppearanceTitle.Text" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="ComputeIndex.Content" xml:space="preserve">
+    <value>Recompute index</value>
+  </data>
+  <data name="ComputingIndex" xml:space="preserve">
+    <value>Computing database index...</value>
+  </data>
+  <data name="DatabaseOps.Text" xml:space="preserve">
+    <value>Database</value>
+  </data>
+  <data name="ExportDbButton.Content" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ImportDbButton.Content" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="DataImportPageTitle.Text" xml:space="preserve">
+    <value>Data Import</value>
+  </data>
+  <data name="DeleteEntry" xml:space="preserve">
+    <value>&lt;delete&gt;</value>
+  </data>
+  <data name="KeepValue" xml:space="preserve">
+    <value>&lt;keep value&gt;</value>
+  </data>
+  <data name="MultipleChoiceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Multiple selection mode</value>
+  </data>
+  <data name="SingleChoiceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Single selection mode</value>
+  </data>
+  <data name="Help.Label" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="EmptyEntry" xml:space="preserve">
+    <value>(Empty)</value>
+  </data>
+  <data name="Events" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="Ballet" xml:space="preserve">
+    <value>Ballet</value>
+  </data>
+  <data name="Cinema" xml:space="preserve">
+    <value>Cinema</value>
+  </data>
+  <data name="Concert" xml:space="preserve">
+    <value>Concert</value>
+  </data>
+  <data name="DeleteEventQuestion" xml:space="preserve">
+    <value>Do you want to delete the event?</value>
+  </data>
+  <data name="DeleteEventsQuestion" xml:space="preserve">
+    <value>Do you want to delete the events?</value>
+  </data>
+  <data name="ErrorInvalidWork" xml:space="preserve">
+    <value>Enter the name of the performance</value>
+  </data>
+  <data name="OpenAir" xml:space="preserve">
+    <value>Open air</value>
+  </data>
+  <data name="Theater" xml:space="preserve">
+    <value>Theater</value>
+  </data>
+  <data name="DeleteEventButton.Content" xml:space="preserve">
+    <value>Delete event</value>
+  </data>
+  <data name="DuplicateEventButton.Content" xml:space="preserve">
+    <value>Duplicate event</value>
+  </data>
+  <data name="EditEventButton.Content" xml:space="preserve">
+    <value>Edit event</value>
+  </data>
+  <data name="EventListPageTitle.Text" xml:space="preserve">
+    <value>My Events</value>
+  </data>
+  <data name="NewEventButton.Content" xml:space="preserve">
+    <value>New event</value>
+  </data>
+  <data name="Composer.Header" xml:space="preserve">
+    <value>Composer / Author</value>
+  </data>
+  <data name="Contributors.Header" xml:space="preserve">
+    <value>Orchestra / Contributors</value>
+  </data>
+  <data name="Director.Header" xml:space="preserve">
+    <value>Director</value>
+  </data>
+  <data name="PerformanceDate.Header" xml:space="preserve">
+    <value>Performance date</value>
+  </data>
+  <data name="Soloist.Header" xml:space="preserve">
+    <value>Soloist</value>
+  </data>
+  <data name="Venue.Header" xml:space="preserve">
+    <value>Venue</value>
+  </data>
+  <data name="Work.Header" xml:space="preserve">
+    <value>Work</value>
+  </data>
+  <data name="EventDetailPageTitle.Text" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="EventDoesAlreadyExist" xml:space="preserve">
+    <value>The event does already exist in the database</value>
+  </data>
+  <data name="NewEvent" xml:space="preserve">
+    <value>New event</value>
+  </data>
+  <data name="EventType.Header" xml:space="preserve">
+    <value>Event type</value>
+  </data>
+  <data name="Opera" xml:space="preserve">
+    <value>Opera</value>
+  </data>
+  <data name="PerformanceDateGrouping.DisplayContent" xml:space="preserve">
+    <value>Performance year</value>
+  </data>
+</root>
