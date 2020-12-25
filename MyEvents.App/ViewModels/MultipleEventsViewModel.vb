@@ -68,6 +68,21 @@ Namespace Global.MyEvents.App.ViewModels
         End Property
         Private PerformanceDatesHaveBlanks As Boolean
 
+        Private _links As New List(Of String)
+        Public ReadOnly Property Links As List(Of String)
+            Get
+                Return _links
+            End Get
+        End Property
+        Private LinksHaveBlanks As Boolean
+
+        Private _countries As New List(Of String)
+        Public ReadOnly Property Countries As List(Of String)
+            Get
+                Return _countries
+            End Get
+        End Property
+        Private CountriesHaveBlanks As Boolean
 
         Public Sub New(models As List(Of EventViewModel))
             MyBase.New(New Performance)
@@ -84,6 +99,8 @@ Namespace Global.MyEvents.App.ViewModels
             Venue = App.Texts.GetString("KeepValue")
             Contributors = App.Texts.GetString("KeepValue")
             PerformanceDate = App.Texts.GetString("KeepValue")
+            Link = App.Texts.GetString("KeepValue")
+            PerformanceCountry = App.Texts.GetString("KeepValue")
             SetupLists()
             IsInEdit = True
             IsModified = False
@@ -107,6 +124,8 @@ Namespace Global.MyEvents.App.ViewModels
             AddStringToList(_venues, item.Venue, VenuesHaveBlanks)
             AddStringToList(_contributorsList, item.Contributors, ContributorsHaveBlanks)
             AddStringToList(_performanceDates, item.PerformanceDate, PerformanceDatesHaveBlanks)
+            AddStringToList(_links, item.Link, LinksHaveBlanks)
+            AddStringToList(_countries, item.PerformanceCountry, CountriesHaveBlanks)
         End Sub
 
         Private Sub AddDeleteEntryToLists()
@@ -118,6 +137,8 @@ Namespace Global.MyEvents.App.ViewModels
             AddStringToList(_venues, deleteEntry)
             AddStringToList(_contributorsList, deleteEntry)
             AddStringToList(_performanceDates, deleteEntry)
+            AddStringToList(_links, deleteEntry)
+            AddStringToList(_countries, deleteEntry)
         End Sub
 
         Private Sub InitializeModelField(BlanksFlag As Boolean, values As List(Of String), ByRef field As String)
@@ -134,6 +155,7 @@ Namespace Global.MyEvents.App.ViewModels
             InitializeModelField(VenuesHaveBlanks, Venues, Venue)
             InitializeModelField(ContributorsHaveBlanks, ContributorsList, Contributors)
             InitializeModelField(PerformanceDatesHaveBlanks, PerformanceDates, PerformanceDate)
+            InitializeModelField(CountriesHaveBlanks, Countries, PerformanceCountry)
         End Sub
 
         Private Sub SetupLists()
@@ -168,12 +190,20 @@ Namespace Global.MyEvents.App.ViewModels
 
         Private Function UpdateEvent(item As EventViewModel) As Boolean
             Dim changed As Boolean
+            If item.PerformanceCountry Is Nothing Then
+                item.PerformanceCountry = ""
+            End If
+            If item.Link Is Nothing Then
+                item.Link = ""
+            End If
             changed = UpdateString(item.Work, Work)
             changed = changed Or UpdateString(item.Composer, Composer)
             changed = changed Or UpdateString(item.Performer, Performer)
             changed = changed Or UpdateString(item.Director, Director)
             changed = changed Or UpdateString(item.Venue, Venue)
             changed = changed Or UpdateString(item.PerformanceDate, PerformanceDate)
+            changed = changed Or UpdateString(item.PerformanceCountry, PerformanceCountry)
+            changed = changed Or UpdateString(item.Link, Link)
             changed = changed Or UpdateString(item.Contributors, Contributors)
             If Type <> Performance.PerformanceType.KeepValue AndAlso Type <> item.Type Then
                 changed = True

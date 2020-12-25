@@ -153,11 +153,15 @@
     <Compile Include="Navigation\NavMenuSecondaryButton.xaml.vb">
       <DependentUpon>NavMenuSecondaryButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Statistics\EventsPerType.vb" />
+    <Compile Include="Statistics\EventsPerYear.vb" />
+    <Compile Include="Statistics\EventStatistics.vb" />
     <Compile Include="TelerikStrings\TelerikStringLoader.vb" />
     <Compile Include="UserControls\BaseFilterControl.vb" />
     <Compile Include="UserControls\ChoiceCheckbox.vb" />
     <Compile Include="UserControls\ColumnMarker.vb" />
     <Compile Include="UserControls\ComposerChoiceFilter.vb" />
+    <Compile Include="UserControls\CountryChoiceFilter.vb" />
     <Compile Include="UserControls\CustomFilterButtonTapCommand.vb" />
     <Compile Include="UserControls\DirectorChoiceFilter.vb" />
     <Compile Include="UserControls\EventTypeChoiceFilter.vb" />
@@ -173,6 +177,7 @@
     <Compile Include="ValueConverters\BooleanOperator.vb" />
     <Compile Include="ValueConverters\BooleanToSelectionModeConverter.vb" />
     <Compile Include="ValueConverters\BooleanToVisibilityConverter.vb" />
+    <Compile Include="ValueConverters\DoubleToStringConverter.vb" />
     <Compile Include="ValueConverters\NullToVisibilityConverter.vb" />
     <Compile Include="ValueConverters\PerformanceTypeToStringConverter.vb" />
     <Compile Include="ValueConverters\StringToDateTimeConverter.vb" />
@@ -198,6 +203,9 @@
     </Compile>
     <Compile Include="Views\SettingsDialog.xaml.vb">
       <DependentUpon>SettingsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StatisticsPage.xaml.vb">
+      <DependentUpon>StatisticsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +317,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\StatisticsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -377,6 +389,7 @@
   <ItemGroup>
     <None Include="MyEvents.App_TemporaryKey.pfx" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

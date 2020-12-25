@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyEvents.ContextProvider;
 
 namespace MyEvents.ContextProvider.Migrations
 {
     [DbContext(typeof(MyEventsContext))]
-    partial class MyEventsContextModelSnapshot : ModelSnapshot
+    [Migration("20201222080024_AddCoountryAndLink")]
+    partial class AddCoountryAndLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

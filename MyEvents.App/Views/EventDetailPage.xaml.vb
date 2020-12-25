@@ -108,10 +108,21 @@ Namespace Global.MyEvents.App.Views
 
         Private Async Sub OnSoloist_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
-                Dim hits As IEnumerable(Of Soloist) = Await App.Repository.Soloists.GetAsync(sender.Text)
+                Dim input As String = sender.Text.Trim()
+                Dim prefix As String = ""
+                Dim lastSlash = input.LastIndexOf("/")
+                If lastSlash > 0 Then
+                    If input.Length = lastSlash + 1 Then
+                        Return ' wait for futher input
+                    Else
+                        prefix = input.Substring(0, lastSlash + 1) + " "
+                        input = input.Substring(lastSlash + 1).Trim()
+                    End If
+                End If
+                Dim hits As IEnumerable(Of Soloist) = Await App.Repository.Soloists.GetAsync(input)
                 Dim dataset As New List(Of String)
                 For Each a In hits
-                    dataset.Add(a.Name)
+                    dataset.Add(prefix + a.Name)
                 Next
                 ' Set the ItemsSource to be your filtered dataset
                 sender.ItemsSource = dataset
@@ -120,10 +131,21 @@ Namespace Global.MyEvents.App.Views
 
         Private Async Sub OnVenue_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
-                Dim hits As IEnumerable(Of Venue) = Await App.Repository.Venues.GetAsync(sender.Text)
+                Dim input As String = sender.Text.Trim()
+                Dim prefix As String = ""
+                Dim lastSlash = input.LastIndexOf("/")
+                If lastSlash > 0 Then
+                    If input.Length = lastSlash + 1 Then
+                        Return ' wait for futher input
+                    Else
+                        prefix = input.Substring(0, lastSlash + 1) + " "
+                        input = input.Substring(lastSlash + 1).Trim()
+                    End If
+                End If
+                Dim hits As IEnumerable(Of Venue) = Await App.Repository.Venues.GetAsync(input)
                 Dim dataset As New List(Of String)
                 For Each a In hits
-                    dataset.Add(a.Name)
+                    dataset.Add(prefix + a.Name)
                 Next
                 ' Set the ItemsSource to be your filtered dataset
                 sender.ItemsSource = dataset
@@ -142,6 +164,25 @@ Namespace Global.MyEvents.App.Views
             End If
         End Sub
 
+        Private Async Sub OnCountry_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+            If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
+                Dim hits As IEnumerable(Of Country) = Await App.Repository.Countries.GetAsync(sender.Text)
+                Dim dataset As New List(Of String)
+                For Each a In hits
+                    dataset.Add(a.Name)
+                Next
+                ' Set the ItemsSource to be your filtered dataset
+                sender.ItemsSource = dataset
+            End If
+        End Sub
+
+        Private Async Sub Venue_SuggestionChosen(sender As AutoSuggestBox, args As AutoSuggestBoxSuggestionChosenEventArgs) Handles Venue.SuggestionChosen
+            Dim selected = args.SelectedItem
+            Dim entry As Venue = Await App.Repository.Venues.GetAsyncExact(selected)
+            If entry IsNot Nothing Then
+                ViewModel.Performance.PerformanceCountry = entry.Country
+            End If
+        End Sub
     End Class
 
 End Namespace

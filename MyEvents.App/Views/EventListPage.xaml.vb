@@ -164,6 +164,22 @@ Namespace Global.MyEvents.App.Views
         End Function
     End Class
 
+    Public Class CountryDataTemplateSelector
+        Inherits DataTemplateSelector
+
+        Public Property EditTemplate As DataTemplate
+        Public Property DisplayTemplate As DataTemplate
+
+        Protected Overrides Function SelectTemplateCore(item As Object, container As DependencyObject) As DataTemplate
+            Dim row = DirectCast(item, EventViewModel)
+            If row.IsInEdit Then
+                Return EditTemplate
+            Else
+                Return DisplayTemplate
+            End If
+        End Function
+    End Class
+
     Public Class PerformanceDateIKeyLookup
         Implements IKeyLookup
 
@@ -361,8 +377,19 @@ Namespace Global.MyEvents.App.Views
             ' Set the ItemsSource to be your filtered dataset
             sender.ItemsSource = dataset
         End Sub
+
         Private Async Sub OnPerformer_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
             Dim hits As IEnumerable(Of Performer) = Await App.Repository.Performers.GetAsync(sender.Text)
+            Dim dataset As New List(Of String)
+            For Each a In hits
+                dataset.Add(a.Name)
+            Next
+            ' Set the ItemsSource to be your filtered dataset
+            sender.ItemsSource = dataset
+        End Sub
+
+        Private Async Sub OnCountry_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
+            Dim hits As IEnumerable(Of Country) = Await App.Repository.Countries.GetAsync(sender.Text)
             Dim dataset As New List(Of String)
             For Each a In hits
                 dataset.Add(a.Name)
@@ -378,7 +405,6 @@ Namespace Global.MyEvents.App.Views
         Private Sub OnDeselectAll()
             DataGrid.DeselectAll()
         End Sub
-
     End Class
 
 End Namespace

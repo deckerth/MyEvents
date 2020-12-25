@@ -14,14 +14,19 @@
         End Sub
 
         Public Property Label As String
-        Public Property Symbol As Symbol
+        Public Property Symbol As Symbol = 0
+        Public Property Glyph As String
         Public Property PathIconMarkup As String
         Public Property HelpUri As Uri
 
 
-        Public ReadOnly Property SymbolAsChar As Char
+        Public ReadOnly Property SymbolAsChar As String
             Get
-                Return Convert.ToChar(Symbol)
+                If Symbol <> 0 Then
+                    Return Convert.ToChar(Symbol)
+                Else
+                    Return Glyph
+                End If
             End Get
         End Property
 
@@ -55,7 +60,7 @@
         Public Property DestPage As Type
 
         Public Property Arguments As Object
-
+        Public Property FontIcon As Integer
     End Class
 
 End Namespace

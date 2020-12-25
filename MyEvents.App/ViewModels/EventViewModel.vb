@@ -1,4 +1,5 @@
-﻿Imports MyEvents.Models
+﻿Imports MyEvents.App.Commands
+Imports MyEvents.Models
 Imports MyEvents.Repository
 Imports Telerik.Core
 
@@ -16,6 +17,7 @@ Namespace Global.MyEvents.App.ViewModels
             Else
                 Me.Model = model
             End If
+            OpenLinkCommand = New RelayCommand(AddressOf OnOpenLink)
             EventDescriptor = AllEventTypes.Where(Function(x) x.Type = Me.Model.Type).FirstOrDefault()
             If EventDescriptor Is Nothing Then
                 EventDescriptor = New EventTypeDescriptor(Performance.PerformanceType.Undefined)
@@ -71,6 +73,18 @@ Namespace Global.MyEvents.App.ViewModels
             End Set
         End Property
 
+        Public Property OpenLinkCommand As RelayCommand
+
+        Private Async Sub OnOpenLink()
+            If Not String.IsNullOrEmpty(Model.Link) Then
+                Try
+                    Dim uri = New Uri(Model.Link)
+                    Await Windows.System.Launcher.LaunchUriAsync(uri)
+                Catch ex As Exception
+                End Try
+            End If
+        End Sub
+
         Public Async Function Refresh() As Task
             Model = Await App.Repository.Events.GetAsync(Id)
             IsModified = False
@@ -91,14 +105,20 @@ Namespace Global.MyEvents.App.ViewModels
             If Not String.IsNullOrWhiteSpace(Model.Director) Then
                 Await App.Repository.Directors.Insert(New Models.Director(Model.Director))
             End If
+
             If Not String.IsNullOrWhiteSpace(Model.Performer) Then
                 Dim soloists = Model.GetSoloistsList()
                 For Each s In soloists
                     Await App.Repository.Soloists.Insert(New Models.Soloist(s))
                 Next
             End If
+
             If Not String.IsNullOrWhiteSpace(Model.Venue) Then
-                Await App.Repository.Venues.Insert(New Models.Venue(Model.Venue))
+                Await App.Repository.Venues.Insert(New Models.Venue(Model.Venue, Model.PerformanceCountry))
+            End If
+
+            If Not String.IsNullOrWhiteSpace(Model.PerformanceCountry) Then
+                Await App.Repository.Countries.Insert(New Models.Country(Model.PerformanceCountry))
             End If
 
         End Function
@@ -229,6 +249,32 @@ Namespace Global.MyEvents.App.ViewModels
                     Else
                         RemoveErrors("PerformanceDate")
                     End If
+                End If
+            End Set
+        End Property
+
+        Public Property Link As String
+            Get
+                Return Model.Link
+            End Get
+            Set(value As String)
+                If Link Is Nothing OrElse Not Link.Equals(value) Then
+                    Model.Link = value
+                    IsModified = True
+                    OnPropertyChanged("Link")
+                End If
+            End Set
+        End Property
+
+        Public Property PerformanceCountry As String
+            Get
+                Return Model.PerformanceCountry
+            End Get
+            Set(value As String)
+                If Model.PerformanceCountry Is Nothing OrElse Not Model.PerformanceCountry.Equals(value) Then
+                    Model.PerformanceCountry = value
+                    IsModified = True
+                    OnPropertyChanged("PerformanceCountry")
                 End If
             End Set
         End Property

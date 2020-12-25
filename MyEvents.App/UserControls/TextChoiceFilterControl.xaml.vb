@@ -21,6 +21,8 @@ Namespace Global.MyEvents.App.UserControls
                         filterDescriptor = New DelegateFilterDescriptor With {.Filter = New DirectorChoiceFilter()}
                     Case "Venue"
                         filterDescriptor = New DelegateFilterDescriptor With {.Filter = New VenueChoiceFilter()}
+                    Case "Country"
+                        filterDescriptor = New DelegateFilterDescriptor With {.Filter = New CountryChoiceFilter()}
                     Case "Contributors"
                         filterDescriptor = New DelegateFilterDescriptor With {.Filter = New PerformerChoiceFilter()}
                     Case "EventTypeDescriptor"

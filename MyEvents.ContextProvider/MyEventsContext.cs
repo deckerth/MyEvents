@@ -16,6 +16,7 @@ namespace MyEvents.ContextProvider
         public DbSet<Soloist> Soloists { get; set; }
         public DbSet<Venue> Venues { get; set; }
         public DbSet<Composer> Composers { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
         private bool MassUpdateMode = false;
         private bool UnsavedChangesExist = false;

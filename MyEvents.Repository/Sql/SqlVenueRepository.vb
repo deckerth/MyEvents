@@ -32,12 +32,13 @@ Namespace Global.MyEvents.Repository.Sql
         End Function
 
         Public Async Function Insert(Venue As Venue) As Task Implements IVenueRepository.Insert
-            If Await GetAsyncExact(Venue.Name) Is Nothing Then
-                If Venue.Name.Contains("Carriger, Gail") Then
-                    Dim x = 0
-                End If
+            Dim existing As Venue = Await GetAsyncExact(Venue.Name)
+            If existing Is Nothing Then
                 Await _db.Venues.AddAsync(Venue)
                 Await _db.SaveChangesAsync()
+            ElseIf Not String.IsNullOrEmpty(Venue.Country) AndAlso Not Venue.Country.Equals(existing.Country) Then
+                existing.Country = Venue.Country
+                _db.Venues.Update(existing)
             End If
         End Function
 

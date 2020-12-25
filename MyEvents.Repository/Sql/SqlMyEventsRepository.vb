@@ -84,6 +84,12 @@ Namespace Global.MyEvents.Repository.Sql
             End Get
         End Property
 
+        Public ReadOnly Property Countries As ICountryRepository Implements IMyEventsRepository.Countries
+            Get
+                Return New SqlCountryRepository(_context)
+            End Get
+        End Property
+
         Public Sub StartMassUpdate() Implements IMyEventsRepository.StartMassUpdate
             _context.StartMassUpdate()
         End Sub

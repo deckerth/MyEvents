@@ -27,14 +27,16 @@ Namespace Global.MyEvents.Repository.Sql
                                                                          x.Director.Contains(y) Or
                                                                          x.Performer.Contains(y) Or
                                                                          x.Venue.Contains(y) Or
-                                                                         x.Work.Contains(y))
+                                                                         x.Work.Contains(y) Or
+                                                                         x.PerformanceCountry.Contains(y))
                 ).OrderByDescending(
                 Function(x As Performance) parameters.Count(Function(y As String) x.Composer.Contains(y) Or
                                                                          x.Contributors.Contains(y) Or
                                                                          x.Director.Contains(y) Or
                                                                          x.Performer.Contains(y) Or
                                                                          x.Venue.Contains(y) Or
-                                                                         x.Work.Contains(y))
+                                                                         x.Work.Contains(y) Or
+                                                                         x.PerformanceCountry.Contains(y))
                 ).AsNoTracking().ToListAsync()
 
         End Function

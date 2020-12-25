@@ -447,4 +447,25 @@
   <data name="PerformanceDateGrouping.DisplayContent" xml:space="preserve">
     <value>Performance year</value>
   </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="EventCounterLabel.Text" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="EventsPerYearChartHorizontalAxes.Title" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="EventsPerYearChartVerticalAxes.Title" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="EventsPerYearTitle.Text" xml:space="preserve">
+    <value>Events per year</value>
+  </data>
+  <data name="Country.Header" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="Link.Header" xml:space="preserve">
+    <value>Link</value>
+  </data>
 </root>

@@ -96,6 +96,10 @@
                     Icon="Save"
                     />
 
+            <AppBarButton Icon="Globe"
+                    IsEnabled="{x:Bind converter:BooleanOperator.OpIsNotInitial(ViewModel.SelectedEvent.Link),Mode=OneWay}"
+                    Command="{x:Bind ViewModel.SelectedEvent.OpenLinkCommand,Mode=OneWay}"/>
+            
             <CommandBar.SecondaryCommands>
                 <AppBarButton
                         IsEnabled="{x:Bind converter:BooleanOperator.OpNot(ViewModel.Progress.Active),Mode=OneWay}"
@@ -329,6 +333,28 @@
                     </local:PerformanceDateDataTemplateSelector.EditTemplate>
                 </local:PerformanceDateDataTemplateSelector>
 
+                <local:CountryDataTemplateSelector x:Key="CountryDataTemplateSelector">
+                    <local:CountryDataTemplateSelector.DisplayTemplate>
+                        <DataTemplate x:DataType="viewModels:EventViewModel">
+                            <TextBlock
+                                   Width="300"
+                                   Text="{x:Bind PerformanceCountry, Mode=OneWay}"
+                                   TextWrapping="WrapWholeWords"
+                                   Padding="0,5"
+                                   VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </local:CountryDataTemplateSelector.DisplayTemplate>
+                    <local:CountryDataTemplateSelector.EditTemplate>
+                        <DataTemplate x:DataType="viewModels:EventViewModel">
+                            <telerikInput:RadAutoCompleteBox
+                                    Width="300"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind PerformanceCountry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextChanged="OnCountry_TextChanged"/>
+                        </DataTemplate>
+                    </local:CountryDataTemplateSelector.EditTemplate>
+                </local:CountryDataTemplateSelector>
+
             </telerikGrid:RadDataGrid.Resources>
 
             <telerikGrid:RadDataGrid.Columns>
@@ -413,6 +439,19 @@
                     </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
                 </telerikGrid:DataGridTemplateColumn>
 
+                <telerikGrid:DataGridTemplateColumn x:Name="Country" x:Uid="Country" 
+                                                    CellContentTemplateSelector="{StaticResource CountryDataTemplateSelector}" 
+                                                    CanUserSort="True"
+                                                    uc:ColumnMarker.RequiresCustomFiltering="True"
+                                                    uc:ColumnMarker.ColumnName="Country">
+                    <telerikGrid:DataGridTemplateColumn.SortDescriptor>
+                        <telerikCore:PropertySortDescriptor PropertyName="PerformanceCountry"/>
+                    </telerikGrid:DataGridTemplateColumn.SortDescriptor>
+                    <telerikGrid:DataGridTemplateColumn.GroupDescriptor>
+                        <telerikCore:PropertyGroupDescriptor PropertyName="PerformanceCountry"/>
+                    </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
+                </telerikGrid:DataGridTemplateColumn>
+
                 <telerikGrid:DataGridTemplateColumn x:Name="PerformanceDateColumn" x:Uid="PerformanceDate" 
                                                     CellContentTemplateSelector="{StaticResource PerformanceDateDataTemplateSelector}" 
                                                     CanUserSort="True"
@@ -425,6 +464,16 @@
                         <telerikCore:DelegateGroupDescriptor KeyLookup="{StaticResource PerformanceDateIKeyLookup}" x:Uid="PerformanceDateGrouping"/>
                     </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
                 </telerikGrid:DataGridTemplateColumn>
+
+                <telerikGrid:DataGridTextColumn x:Uid="Link" PropertyName="Link" SizeMode="Fixed" Width="300">
+                    <telerikGrid:DataGridTextColumn.CellContentStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextWrapping" Value="WrapWholeWords"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="0,5"/>
+                        </Style>
+                    </telerikGrid:DataGridTextColumn.CellContentStyle>
+                </telerikGrid:DataGridTextColumn>
 
             </telerikGrid:RadDataGrid.Columns>
 

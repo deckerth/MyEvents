@@ -9,6 +9,7 @@ Namespace Global.MyEvents.Repository
         ReadOnly Property Performers As IPerformerRepository
         ReadOnly Property Soloists As ISoloistRepository
         ReadOnly Property Venues As IVenueRepository
+        ReadOnly Property Countries As ICountryRepository
         ReadOnly Property ImportExportService As IImportExportService
 
         Sub StartMassUpdate()

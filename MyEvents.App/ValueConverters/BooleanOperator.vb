@@ -21,6 +21,10 @@
             Return a IsNot Nothing AndAlso Not b
         End Function
 
+        Public Shared Function OpIsNotInitial(a As String) As Boolean
+            Return Not String.IsNullOrEmpty(a)
+        End Function
+
     End Class
 
 End Namespace

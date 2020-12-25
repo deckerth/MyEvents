@@ -57,7 +57,10 @@ Namespace Global.MyEvents.App
     {
       New NavMenuItem With {.Symbol = Symbol.Library,
                             .Label = App.Texts.GetString("Events"),
-                            .DestPage = GetType(EventListPage), .IsSelected = True}
+                            .DestPage = GetType(EventListPage), .IsSelected = True},
+      New NavMenuItem With {.Symbol = 60165, ' = 0xEB05
+                            .Label = App.Texts.GetString("Statistics"),
+                            .DestPage = GetType(StatisticsPage), .IsSelected = False}
     })
 
         Public Sub AppShell_KeyDown(sender As Object, e As KeyRoutedEventArgs)

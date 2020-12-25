@@ -42,6 +42,7 @@
                     x:Name="Glyph"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    FontFamily="Segoe MDL2 Assets"
                     FontSize="16"
                     Glyph="{x:Bind SymbolAsChar}"
                     ToolTipService.ToolTip="{x:Bind Label}" >

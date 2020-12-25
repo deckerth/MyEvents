@@ -13,6 +13,7 @@ Namespace Global.MyEvents.Repository.Sql
         Private Const PerformersWorkbook As String = "Performers"
         Private Const SoloistsWorkbook As String = "Soloists"
         Private Const VenuesWorkbook As String = "Venues"
+        Private Const CountriesWorkbook As String = "Countries"
 
         Private Repository As SqlMyEventsRepository
 
@@ -77,6 +78,14 @@ Namespace Global.MyEvents.Repository.Sql
                         End Select
                     Catch ex As Exception
                     End Try
+                    Try
+                        anEvent.Link = worksheet.Cells(i, 10).Value.ToString()
+                    Catch ex As Exception
+                    End Try
+                    Try
+                        anEvent.PerformanceCountry = worksheet.Cells(i, 11).Value.ToString()
+                    Catch ex As Exception
+                    End Try
                     books.Add(anEvent)
                 End If
             Next
@@ -104,6 +113,8 @@ Namespace Global.MyEvents.Repository.Sql
             worksheet.Cells(1, 7).Value = "PerformanceDate"
             worksheet.Cells(1, 8).Value = "Venue"
             worksheet.Cells(1, 9).Value = "EventType"
+            worksheet.Cells(1, 10).Value = "Link"
+            worksheet.Cells(1, 11).Value = "PerformanceCountry"
 
             Dim events = Await Repository.Events.GetAsync()
 
@@ -131,6 +142,10 @@ Namespace Global.MyEvents.Repository.Sql
                     Case Performance.PerformanceType.Theater
                         worksheet.Cells(i + 1, 9).Value = "Theater"
                 End Select
+
+                worksheet.Cells(i + 1, 10).Value = performance.Link
+                worksheet.Cells(i + 1, 11).Value = performance.PerformanceCountry
+
             Next
 
         End Function
@@ -275,6 +290,41 @@ Namespace Global.MyEvents.Repository.Sql
 
         End Function
 
+        Private Async Function ImportCountriesAsync(worksheet As ExcelWorksheet, ImportOption As IImportExportService.ImportOptions) As Task
+
+            Dim rows = worksheet.Dimension.Rows
+            Dim items As New List(Of Country)
+            For i = 2 To rows
+                Dim item As New Country With {
+                    .Name = worksheet.Cells(i, 1).Value.ToString()
+                }
+                items.Add(item)
+            Next
+
+            If ImportOption = IImportExportService.ImportOptions.ReplaceEvents Then
+                Await DirectCast(Repository.Countries, SqlCountryRepository).SetCountries(items)
+            Else
+                Await DirectCast(Repository.Countries, SqlCountryRepository).AddCountries(items)
+            End If
+
+        End Function
+
+        Private Async Function ExportCountriesAsync(package As ExcelPackage) As Task
+
+            Dim worksheet As ExcelWorksheet = package.Workbook.Worksheets.Add(CountriesWorkbook)
+
+            'Add the headers
+            worksheet.Cells(1, 1).Value = "Name"
+
+            Dim items = Await Repository.Countries.GetAsync()
+
+            For i = 1 To items.Count
+                Dim item = items(i - 1)
+                worksheet.Cells(i + 1, 1).Value = item.Name
+            Next
+
+        End Function
+
         Private Async Function ImportVenuesAsync(worksheet As ExcelWorksheet, ImportOption As IImportExportService.ImportOptions) As Task
 
             Dim rows = worksheet.Dimension.Rows
@@ -283,6 +333,10 @@ Namespace Global.MyEvents.Repository.Sql
                 Dim item As New Venue With {
                     .Name = worksheet.Cells(i, 1).Value.ToString()
                 }
+                Try
+                    item.Country = worksheet.Cells(i, 2).Value.ToString()
+                Catch ex As Exception
+                End Try
                 items.Add(item)
             Next
 
@@ -306,6 +360,7 @@ Namespace Global.MyEvents.Repository.Sql
             For i = 1 To items.Count
                 Dim item = items(i - 1)
                 worksheet.Cells(i + 1, 1).Value = item.Name
+                worksheet.Cells(i + 1, 2).Value = item.Country
             Next
 
         End Function
@@ -322,6 +377,7 @@ Namespace Global.MyEvents.Repository.Sql
                     Await ImportPerformersAsync(package.Workbook.Worksheets(PerformersWorkbook), ImportOption)
                     Await ImportSoloistsAsync(package.Workbook.Worksheets(SoloistsWorkbook), ImportOption)
                     Await ImportVenuesAsync(package.Workbook.Worksheets(VenuesWorkbook), ImportOption)
+                    Await ImportCountriesAsync(package.Workbook.Worksheets(CountriesWorkbook), ImportOption)
                 End Using
             End If
             Return counters
@@ -344,6 +400,7 @@ Namespace Global.MyEvents.Repository.Sql
                 Await ExportPerformersAsync(package)
                 Await ExportSoloistsAsync(package)
                 Await ExportVenuesAsync(package)
+                Await ExportCountriesAsync(package)
                 package.Save()
             End If
         End Function

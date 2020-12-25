@@ -120,7 +120,7 @@
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="EventType"
-                           Text="{x:Bind ViewModel.Performance.Composer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Text="{x:Bind ViewModel.Performance.Composer, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            TextChanged="OnComposer_TextChanged"/>
                         <ComboBox
@@ -131,7 +131,8 @@
                            IsEditable="True"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="EventTypeList"
-                           SelectedItem="{x:Bind ViewModel.Events.Composer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Composer, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.Composer, Mode=TwoWay}" 
                            ItemsSource="{x:Bind ViewModel.Events.Composers,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
@@ -144,7 +145,7 @@
                            IsReadOnly="{x:Bind ViewModel.IsInEdit, Converter={StaticResource boolInverterConverter}, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Composer"
-                           Text="{x:Bind ViewModel.Performance.Work, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Work, Mode=TwoWay}" 
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                             />
                         <ComboBox
@@ -155,7 +156,8 @@
                            IsEditable="True"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Composers"
-                           SelectedItem="{x:Bind ViewModel.Events.Work, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Work, Mode=TwoWay}" 
+                           SelectedItem="{x:Bind ViewModel.Events.Work, Mode=TwoWay}" 
                            ItemsSource="{x:Bind ViewModel.Events.Works,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                            />
@@ -168,7 +170,7 @@
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Work"
-                           Text="{x:Bind ViewModel.Performance.Director, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Text="{x:Bind ViewModel.Performance.Director, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            TextChanged="OnDirector_TextChanged"/>
                         <ComboBox
@@ -179,7 +181,8 @@
                            IsEditable="True"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Works"
-                           SelectedItem="{x:Bind ViewModel.Events.Director, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Director, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.Director, Mode=TwoWay}" 
                            ItemsSource="{x:Bind ViewModel.Events.Directors,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
@@ -192,7 +195,7 @@
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Director"
-                           Text="{x:Bind ViewModel.Performance.Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Text="{x:Bind ViewModel.Performance.Performer, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            TextChanged="OnSoloist_TextChanged"/>
                         <ComboBox
@@ -203,7 +206,8 @@
                            IsEditable="True"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Directors"
-                           SelectedItem="{x:Bind ViewModel.Events.Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Performer, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.Performer, Mode=TwoWay}" 
                            ItemsSource="{x:Bind ViewModel.Events.Soloists,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
@@ -216,7 +220,7 @@
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Soloist"
-                           Text="{x:Bind ViewModel.Performance.Contributors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Text="{x:Bind ViewModel.Performance.Contributors, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            TextChanged="OnContributors_TextChanged"/>
                         <ComboBox
@@ -227,7 +231,8 @@
                            IsEditable="True"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Soloists"
-                           SelectedItem="{x:Bind ViewModel.Events.Contributors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Contributors, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.Contributors, Mode=TwoWay}" 
                            ItemsSource="{x:Bind ViewModel.Events.ContributorsList,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
@@ -240,19 +245,46 @@
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Contributors"
-                           Text="{x:Bind ViewModel.Performance.Venue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Text="{x:Bind ViewModel.Performance.Venue, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            TextChanged="OnVenue_TextChanged"/>
                         <ComboBox
                            x:Name="Venues"
                            x:Uid="Venue"
                            MinWidth="300"
-                           Margin="0,8,16,8"
+                           Margin="0,8,0,8"
                            IsEditable="True"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="ContributorsList"
-                           SelectedItem="{x:Bind ViewModel.Events.Venue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{x:Bind ViewModel.Performance.Venue, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.Venue, Mode=TwoWay}" 
                            ItemsSource="{x:Bind ViewModel.Events.Venues,Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
+                            />
+
+                        <AutoSuggestBox
+                           x:Name="Country"
+                           x:Uid="Country"
+                           Width="300"
+                           Margin="10,0,0,0"
+                           IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
+                           RelativePanel.RightOf="Venue"
+                           RelativePanel.AlignVerticalCenterWith="Venue"
+                           Text="{x:Bind ViewModel.Performance.PerformanceCountry, Mode=TwoWay}"
+                           Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
+                            
+                           TextChanged="OnCountry_TextChanged"/>
+                        <ComboBox
+                           x:Name="Countries"
+                           x:Uid="Country"
+                           MinWidth="300"
+                           Margin="10,0,0,0"
+                           IsEditable="True"
+                           RelativePanel.RightOf="Venues"
+                           RelativePanel.AlignVerticalCenterWith="Venues"
+                           Text="{x:Bind ViewModel.Performance.PerformanceCountry, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.PerformanceCountry, Mode=TwoWay}" 
+                           ItemsSource="{x:Bind ViewModel.Events.Countries,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
 
@@ -260,24 +292,59 @@
                            x:Name="PerformanceDate"
                            x:Uid="PerformanceDate"
                            Width="300"
-                           Margin="0,8,16,8"
+                           Margin="10,0,0,0"
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
-                           RelativePanel.AlignTopWith="Venue"
-                           RelativePanel.RightOf="Venue"
+                           RelativePanel.RightOf="Country"
+                           RelativePanel.AlignVerticalCenterWith="Venue"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           Date="{x:Bind ViewModel.Performance.PerformanceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource stringToDateTimeOffsetConverter}}"/>
+                           Date="{x:Bind ViewModel.Performance.PerformanceDate, Mode=TwoWay,Converter={StaticResource stringToDateTimeOffsetConverter}}"/>
                         <ComboBox
                            x:Name="PerformanceDates"
                            x:Uid="PerformanceDate"
                            Width="200"
-                           Margin="0,8,16,8"
+                           Margin="10,0,0,0"
                            IsEditable="True"
-                           RelativePanel.AlignTopWith="Venues"
-                           RelativePanel.RightOf="Venues"
-                           SelectedItem="{x:Bind ViewModel.Events.PerformanceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           RelativePanel.RightOf="Countries"
+                           RelativePanel.AlignVerticalCenterWith="Venues"
+                           Text="{x:Bind ViewModel.Events.PerformanceDate, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.PerformanceDate, Mode=TwoWay}"
                            ItemsSource="{x:Bind ViewModel.Events.PerformanceDates,Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"                           
                             />
+
+                        <TextBox
+                           x:Name="Link"
+                           x:Uid="Link"
+                           Width="600"
+                           Margin="0,8,0,8"
+                           IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.Below="PerformanceDate"
+                           Text="{x:Bind ViewModel.Performance.Link, Mode=TwoWay}"
+                           Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
+                           />
+                        <ComboBox
+                           x:Name="Links"
+                           x:Uid="Link"
+                           MinWidth="600"
+                           Margin="0,8,0,8"
+                           IsEditable="True"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.Below="PerformanceDates"
+                           Text="{x:Bind ViewModel.Performance.Link, Mode=TwoWay}"
+                           SelectedItem="{x:Bind ViewModel.Events.Link, Mode=TwoWay}" 
+                           ItemsSource="{x:Bind ViewModel.Events.Links,Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
+                            />
+                        <AppBarButton Icon="Globe"
+                                      Margin="0, 35, 0, 0"
+                                      RelativePanel.RightOf="Link"
+                                      RelativePanel.AlignVerticalCenterWith="Link"
+                                      IsEnabled="{x:Bind converters:BooleanOperator.OpIsNotInitial(ViewModel.Performance.Link),Mode=OneWay}"
+                                      Command="{x:Bind ViewModel.Performance.OpenLinkCommand,Mode=OneWay}"
+                                      Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
+                           >
+                        </AppBarButton>
 
                     </RelativePanel>
                 </StackPanel>

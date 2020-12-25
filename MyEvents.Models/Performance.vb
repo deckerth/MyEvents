@@ -53,6 +53,8 @@
         Public Property Contributors As String = ""
         Public Property PerformanceDate As String = ""
         Public Property Type As PerformanceType = PerformanceType.Undefined
+        Public Property Link As String = ""
+        Public Property PerformanceCountry As String = ""
 
 
         Public Function IEquatable_Equals(other As Performance) As Boolean Implements IEquatable(Of Performance).Equals
@@ -63,7 +65,9 @@
                 Director.Equals(other.Director) AndAlso
                 Venue.Equals(other.Venue) AndAlso
                 Contributors.Equals(other.Contributors) AndAlso
-                PerformanceDate.Equals(other.PerformanceDate)
+                PerformanceDate.Equals(other.PerformanceDate) AndAlso
+                Link.Equals(other.Link) AndAlso
+                PerformanceCountry.Equals(other.PerformanceCountry)
         End Function
 
         Public Function Clone() As Performance
@@ -103,8 +107,11 @@
         Private Function UpdateString(ByRef source As String, value As String) As Boolean
             Dim changed As Boolean = False
 
-            If (String.IsNullOrEmpty(source) And Not String.IsNullOrEmpty(value)) OrElse
-               (Not String.IsNullOrEmpty(source) And String.IsNullOrEmpty(value)) OrElse
+            If String.IsNullOrEmpty(source) AndAlso String.IsNullOrEmpty(value) Then
+                Return False
+            End If
+            If (String.IsNullOrEmpty(source) AndAlso Not String.IsNullOrEmpty(value)) OrElse
+               (Not String.IsNullOrEmpty(source) AndAlso String.IsNullOrEmpty(value)) OrElse
                (Not source.Equals(value)) Then
                 source = value
                 changed = True
@@ -128,6 +135,8 @@
             changed = changed Or UpdateString(Venue, anotherEvent.Venue)
             changed = changed Or UpdateString(Contributors, anotherEvent.Contributors)
             changed = changed Or UpdateString(PerformanceDate, anotherEvent.PerformanceDate)
+            changed = changed Or UpdateString(Link, anotherEvent.Link)
+            changed = changed Or UpdateString(PerformanceCountry, anotherEvent.PerformanceCountry)
 
 
             Return changed

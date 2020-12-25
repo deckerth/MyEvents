@@ -76,7 +76,8 @@ Namespace Global.MyEvents.App.ViewModels
                 Return _selectedEvent
             End Get
             Set(value As EventViewModel)
-                SetProperty(Of EventViewModel)(_selectedEvent, value)
+                SetProperty(Of EventViewModel)(_selectedEvent, value, "SelectedEvent")
+                OnPropertyChanged("SelectedEvent.Link")
             End Set
         End Property
 
@@ -367,6 +368,7 @@ Namespace Global.MyEvents.App.ViewModels
             Await App.Repository.Performers.ClearAsync()
             Await App.Repository.Soloists.ClearAsync()
             Await App.Repository.Venues.ClearAsync()
+            Await App.Repository.Countries.ClearAsync()
             For Each e In Events
                 Await e.UpdateIndex()
                 Await Progress.IncrementAsync(1)
@@ -375,6 +377,10 @@ Namespace Global.MyEvents.App.ViewModels
 
             Await Progress.HideAsync()
         End Function
+
+#End Region
+
+#Region "OpenLink"
 
 #End Region
     End Class
