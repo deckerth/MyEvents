@@ -32,8 +32,14 @@ Namespace Global.MyEvents.App
         Public Property AppViewModel As New AppShellViewModel
 
         Public Sub New()
+            _AppShell = Me
             InitializeComponent()
             AddHandler Loaded, AddressOf OnLoadedHandler
+            AddHandler EventDetailPageViewModel.EditMode, AddressOf OnEditModeChanged
+        End Sub
+
+        Private Sub OnEditModeChanged(isActive As Boolean)
+            NavMenuList.IsEnabled = Not isActive
         End Sub
 
         Private Sub OnLoadedHandler(sender As Object, e As RoutedEventArgs)
@@ -60,7 +66,10 @@ Namespace Global.MyEvents.App
                             .DestPage = GetType(EventListPage), .IsSelected = True},
       New NavMenuItem With {.Symbol = 60165, ' = 0xEB05
                             .Label = App.Texts.GetString("Statistics"),
-                            .DestPage = GetType(StatisticsPage), .IsSelected = False}
+                            .DestPage = GetType(StatisticsPage), .IsSelected = False},
+      New NavMenuItem With {.Symbol = Symbol.Calendar,
+                            .Label = App.Texts.GetString("Planned"),
+                            .DestPage = GetType(PlannedEventsPage), .IsSelected = False}
     })
 
         Public Sub AppShell_KeyDown(sender As Object, e As KeyRoutedEventArgs)
@@ -119,17 +128,28 @@ Namespace Global.MyEvents.App
         End Sub
 
         ' Navigate to the Page for the selected
-        Private Sub NavMenuList_ItemInvoked(sender As Object, listViewItem As ListViewItem)
-            For Each i In PrimaryMenuItems
-                i.IsSelected = False
-            Next
+        Private Sub NavMenuList_ItemInvoked(sender As Object, args As NavMenuListView.ItemInvokedEventArgs)
 
-            Dim item = DirectCast(DirectCast(sender, NavMenuListView).ItemFromContainer(listViewItem), NavMenuItem)
+            Dim item = DirectCast(DirectCast(sender, NavMenuListView).ItemFromContainer(args.Item), NavMenuItem)
 
             If item IsNot Nothing Then
-                item.IsSelected = True
                 If item.DestPage IsNot Nothing AndAlso item.DestPage IsNot AppFrame.CurrentSourcePageType Then
-                    AppFrame.Navigate(item.DestPage, item.Arguments)
+                    If AppFrame.CurrentSourcePageType Is GetType(EventDetailPage) Then
+                        If Not EventDetailPage.CanBeLeft() Then
+                            args.NavigationAllowed = False
+                            Return
+                        End If
+                    ElseIf AppFrame.CurrentSourcePageType Is GetType(EventListPage) Then
+                        If EventListPage.Current.ViewModel.IsModified Then
+                            args.NavigationAllowed = False
+                            Return
+                        End If
+                    End If
+                    For Each i In PrimaryMenuItems
+                        i.IsSelected = False
+                    Next
+                    item.IsSelected = True
+                    AppFrame.Navigate(item.DestPage, AppViewModel.MainViewModel)
                 End If
             End If
         End Sub

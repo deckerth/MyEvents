@@ -23,7 +23,14 @@ Namespace Global.MyEvents.App.Navigation
             IsItemClickEnabled = True
             AddHandler ItemClick, AddressOf ItemClickedHandler
             AddHandler Loaded, AddressOf OnLoadedHandler
+            AddHandler SelectionChanged, AddressOf SelectionChangedHandler
 
+        End Sub
+
+        Private Sub SelectionChangedHandler(sender As Object, e As SelectionChangedEventArgs)
+            If lastSelectedItem IsNot Nothing AndAlso SelectedItem IsNot Nothing AndAlso lastSelectedIndex <> SelectedIndex Then
+                SelectedItem = lastSelectedItem
+            End If
         End Sub
 
         Private Sub OnPaneOpenPropertyChanged(sender As Object, e As Object)
@@ -58,28 +65,35 @@ Namespace Global.MyEvents.App.Navigation
             Next
         End Sub
 
+        Private lastSelectedItem As ListViewItem = Nothing
+        Private lastSelectedIndex As Integer = -1
+
         ' Mark the <paramref name="item"/> as selected And ensures everything else Is Not.
         ' If the <paramref name="item"/> Is null then everything Is unselected.
         Public Sub SetSelectedItem(item As ListViewItem)
 
-            Dim index As Integer = -1
-
             If item IsNot Nothing Then
-                index = IndexFromContainer(item)
+                lastSelectedIndex = IndexFromContainer(item)
             End If
 
             For i = 0 To Items.Count - 1
                 Dim lvi = DirectCast(ContainerFromIndex(i), ListViewItem)
-                If i <> index And lvi IsNot Nothing Then
+                If i <> lastSelectedIndex And lvi IsNot Nothing Then
                     lvi.IsSelected = False
-                ElseIf i = index Then
+                ElseIf i = lastSelectedIndex Then
                     lvi.IsSelected = True
+                    lastSelectedItem = lvi
+                    SelectedItem = lvi
                 End If
             Next
 
         End Sub
 
-        Public Event ItemInvoked(sender As Object, item As ListViewItem)
+        Public Class ItemInvokedEventArgs
+            Public Property NavigationAllowed As Boolean = True
+            Public Property Item As ListViewItem
+        End Class
+        Public Event ItemInvoked(sender As Object, args As ItemInvokedEventArgs)
 
         Protected Overrides Sub OnKeyDown(e As KeyRoutedEventArgs)
             MyBase.OnKeyDown(e)
@@ -118,17 +132,20 @@ Namespace Global.MyEvents.App.Navigation
         End Sub
 
         Private Sub InvokeItem(focusedItem As Object)
-            SetSelectedItem(focusedItem)
-            RaiseEvent ItemInvoked(Me, DirectCast(focusedItem, ListViewItem))
+            Dim args = New ItemInvokedEventArgs With {.Item = DirectCast(focusedItem, ListViewItem)}
+            RaiseEvent ItemInvoked(Me, args)
+            If args.NavigationAllowed Then
+                SetSelectedItem(focusedItem)
+                If splitViewHost.IsPaneOpen And (splitViewHost.DisplayMode = SplitViewDisplayMode.CompactOverlay Or splitViewHost.DisplayMode = SplitViewDisplayMode.Overlay) Then
+                    splitViewHost.IsPaneOpen = False
+                End If
 
-            If splitViewHost.IsPaneOpen And (splitViewHost.DisplayMode = SplitViewDisplayMode.CompactOverlay Or splitViewHost.DisplayMode = SplitViewDisplayMode.Overlay) Then
-                splitViewHost.IsPaneOpen = False
+                If TypeOf (focusedItem) Is ListViewItem Then
+                    DirectCast(focusedItem, ListViewItem).Focus(FocusState.Programmatic)
+                End If
+            Else
+                SetSelectedItem(lastSelectedItem)
             End If
-
-            If TypeOf (focusedItem) Is ListViewItem Then
-                DirectCast(focusedItem, ListViewItem).Focus(FocusState.Programmatic)
-            End If
-
         End Sub
 
         Private Sub OnPaneToggled()

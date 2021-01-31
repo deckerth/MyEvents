@@ -61,6 +61,8 @@ Namespace Global.MyEvents.App.ViewModels
             End Set
         End Property
 
+        Public Shared Event EditMode(isActive As Boolean)
+
         Private _isInEdit As Boolean = False
         ' <summary>
         ' Gets or sets the current edit mode 
@@ -71,6 +73,7 @@ Namespace Global.MyEvents.App.ViewModels
             End Get
             Set(value As Boolean)
                 SetProperty(Of Boolean)(_isInEdit, value)
+                RaiseEvent EditMode(_isInEdit)
             End Set
         End Property
 

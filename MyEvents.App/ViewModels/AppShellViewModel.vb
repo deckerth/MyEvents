@@ -1,9 +1,12 @@
 ﻿Imports Microsoft.Toolkit.Uwp.Helpers
+Imports Windows.System
 
 Namespace Global.MyEvents.App.ViewModels
 
     Public Class AppShellViewModel
         Inherits BindableBase
+
+        Public Property MainViewModel As EventListPageViewModel
 
         Private _navigationAllowed As Boolean
         Public Property NavigationAllowed As Boolean
@@ -16,8 +19,17 @@ Namespace Global.MyEvents.App.ViewModels
         End Property
 
         Public Async Function SetNavigationAllowedAsync(value As Boolean) As Task
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(AppShell.Current.CoreView, Sub() NavigationAllowed = value)
+            'AppShell.Current.CoreView.DispatcherQueue.TryEnqueue(Sub() NavigationAllowed = value)
+            If AppShell.Current.CoreView IsNot Nothing Then
+                Await DispatcherHelper.ExecuteOnUIThreadAsync(AppShell.Current.CoreView, Sub() NavigationAllowed = value)
+            Else
+                NavigationAllowed = value
+            End If
         End Function
+
+        Public Sub New()
+            MainViewModel = New EventListPageViewModel()
+        End Sub
 
     End Class
 

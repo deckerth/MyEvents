@@ -17,7 +17,7 @@ Namespace Global.MyEvents.Repository
         Function GetAsyncExact(search As String) As Task(Of Performer)
 
         ' Adds a new Performer if it does not exist
-        Function Insert(Performer As Performer) As Task
+        Function Insert(Performer As Performer) As Task(Of Boolean)
 
         ' Clears the database
         Function ClearAsync() As Task

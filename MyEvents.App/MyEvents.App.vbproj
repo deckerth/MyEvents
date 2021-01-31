@@ -172,11 +172,16 @@
     <Compile Include="UserControls\TextChoiceFilterControl.xaml.vb">
       <DependentUpon>TextChoiceFilterControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Token.vb" />
+    <Compile Include="UserControls\TokenizedInputField.xaml.vb">
+      <DependentUpon>TokenizedInputField.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\VenueChoiceFilter.vb" />
     <Compile Include="ValueConverters\BooleanInverterConverter.vb" />
     <Compile Include="ValueConverters\BooleanOperator.vb" />
     <Compile Include="ValueConverters\BooleanToSelectionModeConverter.vb" />
     <Compile Include="ValueConverters\BooleanToVisibilityConverter.vb" />
+    <Compile Include="ValueConverters\DateComputations.vb" />
     <Compile Include="ValueConverters\DoubleToStringConverter.vb" />
     <Compile Include="ValueConverters\NullToVisibilityConverter.vb" />
     <Compile Include="ValueConverters\PerformanceTypeToStringConverter.vb" />
@@ -186,11 +191,14 @@
     <Compile Include="ValueConverters\StringVisibilityConverter.vb" />
     <Compile Include="ViewModels\AppShellViewModel.vb" />
     <Compile Include="ViewModels\BindableBase.vb" />
+    <Compile Include="ViewModels\ContributorsViewModel.vb" />
     <Compile Include="ViewModels\EventDetailPageViewModel.vb" />
     <Compile Include="ViewModels\EventListPageViewModel.vb" />
     <Compile Include="ViewModels\EventTypeDescriptor.vb" />
     <Compile Include="ViewModels\EventViewModel.vb" />
     <Compile Include="ViewModels\MultipleEventsViewModel.vb" />
+    <Compile Include="ViewModels\NotificationViewModel.vb" />
+    <Compile Include="ViewModels\PlannedEventsPageViewModel.vb" />
     <Compile Include="ViewModels\ProgressRingViewModel.vb" />
     <Compile Include="Views\EventDetailPage.xaml.vb">
       <DependentUpon>EventDetailPage.xaml</DependentUpon>
@@ -200,6 +208,9 @@
     </Compile>
     <Compile Include="Views\ImportResultDialog.xaml.vb">
       <DependentUpon>ImportResultDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlannedEventsPage.xaml.vb">
+      <DependentUpon>PlannedEventsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsDialog.xaml.vb">
       <DependentUpon>SettingsDialog.xaml</DependentUpon>
@@ -301,6 +312,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\TokenizedInputField.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EventDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -310,6 +325,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ImportResultDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlannedEventsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -359,8 +378,14 @@
     <PackageReference Include="Microsoft.Toolkit.Uwp">
       <Version>7.0.0-preview4</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
+      <Version>7.0.0-preview4</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>7.0.0-preview4</Version>
+    </PackageReference>
+    <PackageReference Include="QueryString.NET">
+      <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="Telerik.UI.for.UniversalWindowsPlatform">
       <Version>1.0.2.1</Version>

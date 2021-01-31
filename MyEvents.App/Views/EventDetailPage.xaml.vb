@@ -7,13 +7,34 @@ Namespace Global.MyEvents.App.Views
         Inherits Page
 
         Public Property ViewModel As EventDetailPageViewModel
+        Public Property AllPerformers As ContributorsViewModel = App.AllPerformers
+
+        Private Shared currentPage As EventDetailPage = Nothing
 
         Public Sub New()
             InitializeComponent()
+            currentPage = Me
             DataContext = ViewModel
         End Sub
 
-        Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
+        Public Shared Function CanBeLeft() As Boolean
+            If currentPage IsNot Nothing Then
+                Return currentPage.CheckCanBeLeft()
+            Else
+                Return True
+            End If
+        End Function
+
+        Public Function CheckCanBeLeft() As Boolean
+            If ViewModel.MultipleEvents Then
+                Return Not ViewModel.Events.IsModified
+            Else
+                Return Not ViewModel.Performance.IsModified
+            End If
+        End Function
+
+        Protected Overrides Async Sub OnNavigatedTo(e As NavigationEventArgs)
+            Await App.AllPerformers.InitializeAsync()
             If e.Parameter IsNot Nothing Then
                 If TypeOf e.Parameter Is MultipleEventsViewModel Then
                     ViewModel = New EventDetailPageViewModel(e.Parameter)
@@ -44,6 +65,10 @@ Namespace Global.MyEvents.App.Views
             ViewModel.IsInEdit = True
 
             MyBase.OnNavigatedTo(e)
+        End Sub
+
+        Protected Overrides Sub OnNavigatedFrom(e As NavigationEventArgs)
+            ViewModel.IsInEdit = False
         End Sub
 
         Private Async Function SaveChangesDialog() As Task(Of ContentDialogResult)

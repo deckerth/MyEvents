@@ -1,4 +1,7 @@
-﻿Imports Microsoft.Toolkit.Uwp.Helpers
+﻿Imports System.Xml
+Imports Microsoft.QueryStringDotNET
+Imports Microsoft.Toolkit.Uwp.Helpers
+Imports Microsoft.Toolkit.Uwp.Notifications
 Imports MyEvents.App.Commands
 Imports MyEvents.App.Global.MyEvents.App.Views
 Imports MyEvents.App.Views
@@ -6,6 +9,8 @@ Imports MyEvents.Repository
 Imports Windows.Storage
 Imports Windows.Storage.Pickers
 Imports Windows.Storage.Provider
+Imports Windows.System
+Imports Windows.UI.Notifications
 Imports Windows.UI.Popups
 
 Namespace Global.MyEvents.App.ViewModels
@@ -23,8 +28,11 @@ Namespace Global.MyEvents.App.ViewModels
             End Get
         End Property
 
+        Private _dispatcherQueue As DispatcherQueue
+
         Public Sub New()
             _current = Me
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread()
             Task.Run(AddressOf GetEventsListAsync)
             SyncCommand = New RelayCommand(AddressOf OnSync)
             ImportDbCommand = New RelayCommand(AddressOf OnImportDB)
@@ -32,12 +40,23 @@ Namespace Global.MyEvents.App.ViewModels
             DeleteEventCommand = New RelayCommand(AddressOf OnDeleteEvent)
             InitalizeSelectionCommands()
             AddHandler EventViewModel.Modified, AddressOf OnEventModified
+            AddHandler EventViewModel.Deleted, AddressOf OnEventDeleted
             AddHandler EventDetailPageViewModel.OnNewEventCreated, AddressOf OnEventCreated
         End Sub
 
         Private Cancelled As Boolean
 
 #Region "Properties"
+
+        Private _logText As String = "Hello world"
+        Public Property LogText As String
+            Get
+                Return _logText
+            End Get
+            Set(value As String)
+                SetProperty(Of String)(_logText, value, "LogText")
+            End Set
+        End Property
 
         Private _isModified As Boolean
         Public Property IsModified As Boolean
@@ -53,8 +72,8 @@ Namespace Global.MyEvents.App.ViewModels
             IsModified = True
         End Sub
 
-        Private Async Sub OnEventCreated(newBook As EventViewModel)
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() _events.Add(newBook))
+        Private Sub OnEventCreated(newBook As EventViewModel)
+            _dispatcherQueue.TryEnqueue(Sub() _events.Add(newBook))
             If ListBackup IsNot Nothing Then
                 ListBackup.Add(newBook)
             End If
@@ -82,6 +101,9 @@ Namespace Global.MyEvents.App.ViewModels
         End Property
 
         Private _multipleSelectionMode As Boolean = False
+
+        Public Property ActivationArgs As Object
+
         Public Property MultipleSelectionMode As Boolean
             Get
                 Return _multipleSelectionMode
@@ -168,6 +190,8 @@ Namespace Global.MyEvents.App.ViewModels
 #End Region
 
 #Region "DataAccess"
+        Public Event ActivationEventSelected()
+
         Public Async Function GetEventsListAsync() As Task
             Await Progress.SetIndeterministicAsync()
             Try
@@ -177,16 +201,62 @@ Namespace Global.MyEvents.App.ViewModels
                 End If
                 Await DispatcherHelper.ExecuteOnUIThreadAsync(
                 Sub()
+                    If ActivationArgs Is Nothing Then
+                        LogText = "ActivationArgs Is Nothing"
+                    Else
+                        LogText = "ActivationArgs Is Not Nothing"
+                    End If
                     Events.Clear()
                     For Each b In repo
                         Events.Add(New EventViewModel(b) With {.Validate = True})
                     Next
+                    Dim activationEvent = GetEventForActivation()
+                    If activationEvent IsNot Nothing Then
+                        LogText = activationEvent.PerformanceDate
+                        SelectedEvent = activationEvent
+                        RaiseEvent ActivationEventSelected()
+                        'DataGrid.ScrollItemIntoView(activationEvent)
+                        '                                              End Sub)
+                    Else
+                        LogText += " + Not found"
+                    End If
                 End Sub)
+                NotificationViewModel.ScheduleNotifications(Events)
+
                 Await Progress.HideAsync()
 
             Catch ex As Exception
 
             End Try
+        End Function
+
+        Public Function GetEvent(title As String, eventDate As String) As EventViewModel
+            Return Events.FirstOrDefault(Function(x) x.Text1.Equals(title) AndAlso x.PerformanceDate.Equals(eventDate))
+        End Function
+
+        Friend Function GetEventForActivation() As EventViewModel
+            If ActivationArgs IsNot Nothing Then
+                Try
+                    Dim query = DirectCast(ActivationArgs, String)
+                    LogText = LogText + "+1"
+                    Dim args = QueryString.Parse(query)
+                    LogText = LogText + "+2"
+                    Dim dateStr = args("date")
+                    LogText = LogText + "+3"
+                    Dim title = args("title")
+                    LogText = LogText + "+4"
+                    Dim selectedEvent = GetEvent(title, dateStr)
+                    LogText = LogText + "+5"
+                    ActivationArgs = Nothing
+                    LogText = LogText + "+6"
+                    Return selectedEvent
+                Catch ex As Exception
+                    LogText = ex.ToString
+                    Return Nothing
+                End Try
+            Else
+                Return Nothing
+            End If
         End Function
 
         Public Property SyncCommand As RelayCommand
@@ -199,7 +269,7 @@ Namespace Global.MyEvents.App.ViewModels
                 Await m.Save()
             Next
 
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() IsModified = False)
+            _dispatcherQueue.TryEnqueue(Sub() IsModified = False)
             Await Progress.HideAsync()
         End Function
 
@@ -233,6 +303,13 @@ Namespace Global.MyEvents.App.ViewModels
             End If
         End Function
 
+        Private Sub OnEventDeleted(sender As EventViewModel)
+            Events.Remove(sender)
+            If ListBackup IsNot Nothing Then
+                ListBackup.Remove(sender)
+            End If
+        End Sub
+
         Private Async Function DeleteEventsAsync(toDelete As List(Of EventViewModel)) As Task
             If toDelete IsNot Nothing Then
                 Dim dialog = New MessageDialog(App.Texts.GetString("DeleteEventsQuestion").Replace("&", toDelete.Count.ToString))
@@ -247,11 +324,7 @@ Namespace Global.MyEvents.App.ViewModels
                 If Cancelled = False Then
                     For Each b In toDelete
                         Try
-                            Await App.Repository.Events.DeleteAsync(b.Id)
-                            Events.Remove(b)
-                            If ListBackup IsNot Nothing Then
-                                ListBackup.Remove(b)
-                            End If
+                            Await b.DeleteAsync()
                         Catch ex As Exception
                         End Try
                     Next
@@ -380,9 +453,6 @@ Namespace Global.MyEvents.App.ViewModels
 
 #End Region
 
-#Region "OpenLink"
-
-#End Region
     End Class
 
 End Namespace

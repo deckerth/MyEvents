@@ -175,6 +175,8 @@
                           Command="{x:Bind ViewModel.DeselectAllCommand}"
                        />
 
+            <TextBlock x:Name="DebugText" Text="{x:Bind ViewModel.LogText,Mode=OneWay}" Visibility="Collapsed"/>
+
         </StackPanel>
 
         <telerikGrid:RadDataGrid

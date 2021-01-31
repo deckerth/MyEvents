@@ -30,13 +30,16 @@ Namespace Global.MyEvents.Repository.Sql
             Return Await _db.Soloists.AsNoTracking().FirstOrDefaultAsync(Function(x As Soloist) x.Id = id)
         End Function
 
-        Public Async Function Insert(Soloist As Soloist) As Task Implements ISoloistRepository.Insert
+        Public Async Function Insert(Soloist As Soloist) As Task(Of Boolean) Implements ISoloistRepository.Insert
             If Await GetAsyncExact(Soloist.Name) Is Nothing Then
                 If Soloist.Name.Contains("Carriger, Gail") Then
                     Dim x = 0
                 End If
                 Await _db.Soloists.AddAsync(Soloist)
                 Await _db.SaveChangesAsync()
+                Return True
+            Else
+                Return False
             End If
         End Function
 

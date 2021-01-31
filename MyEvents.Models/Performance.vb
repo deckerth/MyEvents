@@ -11,6 +11,7 @@
             Opera
             Cinema
             OpenAir
+            Planned
             DeleteValue
             KeepValue
             Undefined
@@ -40,6 +41,7 @@
                     _allPerformanceTypes.Add(PerformanceType.Theater)
                     _allPerformanceTypes.Add(PerformanceType.Cinema)
                     _allPerformanceTypes.Add(PerformanceType.OpenAir)
+                    _allPerformanceTypes.Add(PerformanceType.Planned)
                 End If
                 Return _allPerformanceTypes
             End Get

@@ -9,7 +9,7 @@
   <Identity
     Name="16412ThomasDecker.MeineEvents"
     Publisher="CN=1330FAFF-275D-4496-A785-CC38B2A4FE2F"
-    Version="1.0.9.0" />
+    Version="1.0.11.0" />
 
   <mp:PhoneIdentity PhoneProductId="0563cb18-c10f-404e-a6e4-8def977ddd9a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

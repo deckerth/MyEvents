@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.Toolkit.Uwp.Helpers
+Imports Windows.System
 
 Namespace Global.MyEvents.App.ViewModels
 
@@ -18,6 +19,8 @@ Namespace Global.MyEvents.App.ViewModels
         End Property
 
         Private _value As Integer
+
+        Private _dispatcherQueue As DispatcherQueue
 
         Private _booksProcessed As Integer = indeterministic
         Public Property BooksProcessed As Integer
@@ -47,6 +50,10 @@ Namespace Global.MyEvents.App.ViewModels
 
         Public Property TotalNumberOfBooks As Integer = 0
 
+        Public Sub New()
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread()
+        End Sub
+
         Public Sub Increment(delta As Integer)
             _value = _value + delta
             If _value Mod 10 = 0 Then
@@ -54,8 +61,8 @@ Namespace Global.MyEvents.App.ViewModels
             End If
         End Sub
 
-        Public Async Function IncrementAsync(delta As Integer) As Task
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() Increment(delta))
+        Public Function IncrementAsync(delta As Integer) As Task
+            _dispatcherQueue.TryEnqueue(Sub() Increment(delta))
         End Function
 
         Public Sub SetDeterministic(total As Integer)
@@ -65,7 +72,7 @@ Namespace Global.MyEvents.App.ViewModels
         End Sub
 
         Public Async Function SetDeterministicAsync(total As Integer) As Task
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() SetDeterministic(total))
+            _dispatcherQueue.TryEnqueue(Sub() SetDeterministic(total))
             If AppShell.Current IsNot Nothing AndAlso AppShell.Current.AppViewModel IsNot Nothing Then
                 Await AppShell.Current.AppViewModel.SetNavigationAllowedAsync(False)
             End If
@@ -77,7 +84,7 @@ Namespace Global.MyEvents.App.ViewModels
         End Sub
 
         Public Async Function SetIndeterministicAsync() As Task
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() SetIndeterministic())
+            _dispatcherQueue.TryEnqueue(Sub() SetIndeterministic())
             If AppShell.Current IsNot Nothing AndAlso AppShell.Current.AppViewModel IsNot Nothing Then
                 Await AppShell.Current.AppViewModel.SetNavigationAllowedAsync(False)
             End If
@@ -88,8 +95,10 @@ Namespace Global.MyEvents.App.ViewModels
         End Sub
 
         Public Async Function HideAsync() As Task
-            Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() Hide())
-            Await AppShell.Current.AppViewModel.SetNavigationAllowedAsync(True)
+            _dispatcherQueue.TryEnqueue(Sub() Hide())
+            If AppShell.Current IsNot Nothing AndAlso AppShell.Current.AppViewModel IsNot Nothing Then
+                Await AppShell.Current.AppViewModel.SetNavigationAllowedAsync(True)
+            End If
         End Function
 
     End Class

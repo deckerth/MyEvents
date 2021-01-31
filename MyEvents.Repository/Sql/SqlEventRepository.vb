@@ -73,16 +73,8 @@ Namespace Global.MyEvents.Repository.Sql
 
                 End Try
             Else
-                existing = Await GetAsyncWithTracking(performance.Work, performance.Composer, performance.PerformanceDate)
-                If existing Is Nothing Then
-                    Await _db.Events.AddAsync(performance)
-                    result = IEventRepository.UpsertResult.added
-                Else
-                    If existing.UpdateFrom(performance) Then
-                        _db.Events.Update(existing)
-                        result = IEventRepository.UpsertResult.updated
-                    End If
-                End If
+                Await _db.Events.AddAsync(performance)
+                result = IEventRepository.UpsertResult.added
             End If
             Await _db.SaveChangesAsync()
             DisplayTrackedEntities(_db.ChangeTracker)

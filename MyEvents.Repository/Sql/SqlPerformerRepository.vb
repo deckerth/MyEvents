@@ -31,13 +31,16 @@ Namespace Global.MyEvents.Repository.Sql
             Return Await _db.Performers.AsNoTracking().FirstOrDefaultAsync(Function(x As Performer) x.Id = id)
         End Function
 
-        Public Async Function Insert(Performer As Performer) As Task Implements IPerformerRepository.Insert
+        Public Async Function Insert(Performer As Performer) As Task(Of Boolean) Implements IPerformerRepository.Insert
             If Await GetAsyncExact(Performer.Name) Is Nothing Then
                 If Performer.Name.Contains("Carriger, Gail") Then
                     Dim x = 0
                 End If
                 Await _db.Performers.AddAsync(Performer)
                 Await _db.SaveChangesAsync()
+                Return True
+            Else
+                Return False
             End If
         End Function
 

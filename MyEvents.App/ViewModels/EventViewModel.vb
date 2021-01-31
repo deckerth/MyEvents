@@ -1,4 +1,5 @@
 ﻿Imports MyEvents.App.Commands
+Imports MyEvents.App.UserControls
 Imports MyEvents.Models
 Imports MyEvents.Repository
 Imports Telerik.Core
@@ -18,10 +19,13 @@ Namespace Global.MyEvents.App.ViewModels
                 Me.Model = model
             End If
             OpenLinkCommand = New RelayCommand(AddressOf OnOpenLink)
+            DeleteCommand = New RelayCommand(AddressOf DeleteAsync)
+
             EventDescriptor = AllEventTypes.Where(Function(x) x.Type = Me.Model.Type).FirstOrDefault()
             If EventDescriptor Is Nothing Then
                 EventDescriptor = New EventTypeDescriptor(Performance.PerformanceType.Undefined)
             End If
+            SetTexts()
         End Sub
 
         Protected _allEventTypes As List(Of EventTypeDescriptor)
@@ -73,6 +77,13 @@ Namespace Global.MyEvents.App.ViewModels
             End Set
         End Property
 
+        Private _notification As NotificationViewModel = New NotificationViewModel(Me)
+        Public ReadOnly Property Notification As NotificationViewModel
+            Get
+                Return _notification
+            End Get
+        End Property
+
         Public Property OpenLinkCommand As RelayCommand
 
         Private Async Sub OnOpenLink()
@@ -94,7 +105,9 @@ Namespace Global.MyEvents.App.ViewModels
             If Not String.IsNullOrWhiteSpace(Model.Contributors) Then
                 Dim contributors = Model.GetContributorsList()
                 For Each k In contributors
-                    Await App.Repository.Performers.Insert(New Models.Performer(k))
+                    If Await App.Repository.Performers.Insert(New Models.Performer(k)) AndAlso App.AllPerformers.IsInitialized Then
+                        App.AllPerformers.Contributors.Add(New Token With {.Text = k})
+                    End If
                 Next
             End If
 
@@ -109,7 +122,9 @@ Namespace Global.MyEvents.App.ViewModels
             If Not String.IsNullOrWhiteSpace(Model.Performer) Then
                 Dim soloists = Model.GetSoloistsList()
                 For Each s In soloists
-                    Await App.Repository.Soloists.Insert(New Models.Soloist(s))
+                    If Await App.Repository.Soloists.Insert(New Models.Soloist(s)) AndAlso App.AllPerformers.IsInitialized Then
+                        App.AllPerformers.Soloists.Add(New Token With {.Text = s})
+                    End If
                 Next
             End If
 
@@ -124,6 +139,7 @@ Namespace Global.MyEvents.App.ViewModels
         End Function
 
         Public Overridable Async Function Save() As Task(Of IEventRepository.UpsertResult)
+            Await Notification.ScheduleNotificationAsync()
             Dim result = Await App.Repository.Events.Upsert(Model)
             IsModified = False
             If result <> IEventRepository.UpsertResult.skipped Then
@@ -131,6 +147,10 @@ Namespace Global.MyEvents.App.ViewModels
             End If
             Return result
         End Function
+
+        Private Sub ScheduleNotification()
+
+        End Sub
 
         Public Property IsInEdit As Boolean
 
@@ -167,6 +187,7 @@ Namespace Global.MyEvents.App.ViewModels
                     Model.Work = value
                     IsModified = True
                     OnPropertyChanged("Work")
+                    SetTexts()
                 End If
             End Set
         End Property
@@ -179,6 +200,7 @@ Namespace Global.MyEvents.App.ViewModels
                     Model.Composer = value
                     IsModified = True
                     OnPropertyChanged("Composer")
+                    SetTexts()
                 End If
             End Set
         End Property
@@ -191,6 +213,7 @@ Namespace Global.MyEvents.App.ViewModels
                     Model.Performer = value
                     IsModified = True
                     OnPropertyChanged("Performer")
+                    SetTexts()
                 End If
             End Set
         End Property
@@ -203,6 +226,7 @@ Namespace Global.MyEvents.App.ViewModels
                     Model.Director = value
                     IsModified = True
                     OnPropertyChanged("Director")
+                    SetTexts()
                 End If
             End Set
         End Property
@@ -227,6 +251,7 @@ Namespace Global.MyEvents.App.ViewModels
                     Model.Contributors = value
                     IsModified = True
                     OnPropertyChanged("Contributors")
+                    SetTexts()
                 End If
             End Set
         End Property
@@ -279,6 +304,68 @@ Namespace Global.MyEvents.App.ViewModels
             End Set
         End Property
 
+        Private _text1 As String = ""
+        Public Property Text1 As String
+            Get
+                Return _text1
+            End Get
+            Set(value As String)
+                If Not _text1.Equals(value) Then
+                    _text1 = value
+                    OnPropertyChanged("Text1")
+                End If
+            End Set
+        End Property
+
+        Private _text2 As String = ""
+        Public Property Text2 As String
+            Get
+                Return _text2
+            End Get
+            Set(value As String)
+                If Not _text2.Equals(value) Then
+                    _text2 = value
+                    OnPropertyChanged("Text2")
+                End If
+            End Set
+        End Property
+
+        Public Sub SetTexts()
+            Dim texts As New List(Of String)
+            If Not String.IsNullOrEmpty(Composer) Then
+                texts.Add(Composer)
+            End If
+            If Not String.IsNullOrEmpty(Work) Then
+                texts.Add(Work)
+            End If
+            If Not String.IsNullOrEmpty(Performer) Then
+                texts.Add(Performer)
+            End If
+            If Not String.IsNullOrEmpty(Director) Then
+                texts.Add(Director)
+            End If
+            If Not String.IsNullOrEmpty(Contributors) Then
+                texts.Add(Contributors)
+            End If
+            Dim count As Integer = 0
+            For Each s In texts
+                If count = 0 Then
+                    Text1 = s
+                ElseIf count = 1 Then
+                    Text2 = s
+                Else
+                    Exit For
+                End If
+                count += 1
+            Next
+            If count = 0 Then
+                Text1 = ""
+                Text2 = ""
+            ElseIf count = 1 Then
+                Text2 = ""
+            End If
+        End Sub
+
         Protected Overrides Function ValidateAsyncOverride(propertyName As String) As Task
             If String.IsNullOrEmpty(Work) Then
                 AddError("Work", App.Texts.GetString("ErrorInvalidWork"))
@@ -287,6 +374,16 @@ Namespace Global.MyEvents.App.ViewModels
             End If
 
             Return MyBase.ValidateAsyncOverride(propertyName)
+        End Function
+
+        Public Property DeleteCommand As RelayCommand
+
+        Public Shared Event Deleted(sender As EventViewModel)
+
+        Public Async Function DeleteAsync() As Task
+            Notification.RemoveNotification()
+            Await App.Repository.Events.DeleteAsync(Id)
+            RaiseEvent Deleted(Me)
         End Function
 
     End Class

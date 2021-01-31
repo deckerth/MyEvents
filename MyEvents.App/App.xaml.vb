@@ -25,14 +25,12 @@ Namespace Global.MyEvents.App
         Public Const ApplicationThemeLight As Integer = 0
         Public Const ApplicationThemeDark As Integer = 1
         Public Shared SelectedApplicationTheme As Integer = 0
-        Public Const FirstNameLastNameFormat As Integer = 0
-        Public Const LastNameFirstNameFormat As Integer = 1
-        Public Shared SelectedNameFormat As Integer = 0
 
         ' <summary>
         ' Pipeline for interacting with backend service Or database.
         ' </summary>
         Public Shared Property Repository As IMyEventsRepository
+        Public Shared Property AllPerformers As New ContributorsViewModel
 
         Public Sub New()
 
@@ -41,7 +39,6 @@ Namespace Global.MyEvents.App
             'AddHandler CoreApplication.UnhandledErrorDetected, AddressOf UnhandledError
 
             SelectedApplicationTheme = settings.Values("ApplicationTheme")
-            SelectedNameFormat = settings.Values("NameFormat")
 
             If SelectedApplicationTheme = ApplicationThemeDark Then
                 RequestedTheme = ApplicationTheme.Dark
@@ -59,13 +56,28 @@ Namespace Global.MyEvents.App
 
         End Sub
 
+        Protected Overrides Sub OnLaunched(e As Windows.ApplicationModel.Activation.LaunchActivatedEventArgs)
+            OnLaunchedOrActivated(e, Nothing)
+        End Sub
+
+        Protected Overrides Sub OnActivated(args As IActivatedEventArgs)
+            Dim arg As Object = Nothing
+            MyBase.OnActivated(args)
+            If TypeOf (args) Is ToastNotificationActivatedEventArgs Then
+                Dim activation = DirectCast(args, ToastNotificationActivatedEventArgs)
+                arg = activation.Argument
+            End If
+            OnLaunchedOrActivated(args, arg)
+        End Sub
+
+
         ''' <summary>
         ''' Wird aufgerufen, wenn die Anwendung durch den Endbenutzer normal gestartet wird. Weitere Einstiegspunkte
         ''' werden verwendet, wenn die Anwendung zum Öffnen einer bestimmten Datei, zum Anzeigen
         ''' von Suchergebnissen usw. gestartet wird.
         ''' </summary>
         ''' <param name="e">Details über Startanforderung und -prozess.</param>
-        Protected Overrides Sub OnLaunched(e As Windows.ApplicationModel.Activation.LaunchActivatedEventArgs)
+        Private Sub OnLaunchedOrActivated(e As IActivatedEventArgs, arg As Object)
 
             ' Prepare the app shell and window content.
             Dim shell As AppShell = TryCast(Window.Current.Content, AppShell)
@@ -75,12 +87,18 @@ Namespace Global.MyEvents.App
                 Window.Current.Content = shell
             End If
 
+            shell.AppViewModel.MainViewModel.ActivationArgs = arg
+
             If shell.AppFrame.Content Is Nothing Then
                 ' When the navigation stack isn't restored, navigate to the first page
                 ' suppressing the initial entrance animation.
-
-                shell.AppFrame.Navigate(GetType(EventListPage), e.Arguments,
-                    New SuppressNavigationTransitionInfo())
+                shell.AppFrame.Navigate(GetType(EventListPage), shell.AppViewModel.MainViewModel,
+                New SuppressNavigationTransitionInfo())
+            ElseIf arg IsNot Nothing Then
+                Dim selectedEvent = shell.AppViewModel.MainViewModel.GetEventForActivation()
+                If selectedEvent IsNot Nothing Then
+                    shell.AppFrame.Navigate(GetType(EventDetailPage), selectedEvent)
+                End If
             End If
 
             GridLocalizationManager.Instance.StringLoader = New TelerikStringLoader()

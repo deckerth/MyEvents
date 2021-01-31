@@ -6,6 +6,8 @@
     xmlns:uc="using:MyEvents.App.UserControls"
     xmlns:viewModels="using:MyEvents.App.ViewModels"
     xmlns:converters="using:MyEvents.App.ValueConverters"
+    xmlns:controls="using:MyEvents.App.UserControls"
+    xmlns:ex="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     xmlns:telerik="using:Telerik.UI.Xaml.Controls.Input"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -187,17 +189,20 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
 
-                        <AutoSuggestBox
+                        <controls:TokenizedInputField
                            x:Name="Soloist"
                            x:Uid="Soloist"
-                           Width="300"
+                           HorizontalAlignment="Stretch"
                            Margin="0,8,16,8"
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Director"
                            Text="{x:Bind ViewModel.Performance.Performer, Mode=TwoWay}"
+                           Delimiter=" / "
+                           Suggestions="{x:Bind AllPerformers.Soloists,Mode=OneWay}"
+                           QueryIcon="{ex:SymbolIconSource Symbol=People}" 
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           TextChanged="OnSoloist_TextChanged"/>
+                           />
                         <ComboBox
                            x:Name="Soloists"
                            x:Uid="Soloist"
@@ -212,17 +217,20 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
 
-                        <AutoSuggestBox
+                        <controls:TokenizedInputField
                            x:Name="Contributors"
                            x:Uid="Contributors"
-                           Width="800"
+                           HorizontalAlignment="Stretch"
                            Margin="0,8,16,8"
                            IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="Soloist"
                            Text="{x:Bind ViewModel.Performance.Contributors, Mode=TwoWay}"
+                           Delimiter=" / "
+                           Suggestions="{x:Bind AllPerformers.Contributors,Mode=OneWay}"
+                           QueryIcon="{ex:SymbolIconSource Symbol=People}" 
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           TextChanged="OnContributors_TextChanged"/>
+                           />
                         <ComboBox
                            x:Name="ContributorsList"
                            x:Uid="Contributors"

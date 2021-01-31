@@ -75,6 +75,8 @@ Namespace Global.MyEvents.Repository.Sql
                                 anEvent.Type = Performance.PerformanceType.OpenAir
                             Case "Theater"
                                 anEvent.Type = Performance.PerformanceType.Theater
+                            Case "Planned"
+                                anEvent.Type = Performance.PerformanceType.Planned
                         End Select
                     Catch ex As Exception
                     End Try
@@ -141,6 +143,8 @@ Namespace Global.MyEvents.Repository.Sql
                         worksheet.Cells(i + 1, 9).Value = "OpenAir"
                     Case Performance.PerformanceType.Theater
                         worksheet.Cells(i + 1, 9).Value = "Theater"
+                    Case Performance.PerformanceType.Planned
+                        worksheet.Cells(i + 1, 9).Value = "Planned"
                 End Select
 
                 worksheet.Cells(i + 1, 10).Value = performance.Link

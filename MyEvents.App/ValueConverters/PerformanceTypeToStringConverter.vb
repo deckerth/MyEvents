@@ -33,6 +33,8 @@ Namespace Global.MyEvents.App.ValueConverters
                         result = App.Texts.GetString("OpenAir")
                     Case Performance.PerformanceType.Theater
                         result = App.Texts.GetString("Theater")
+                    Case Performance.PerformanceType.Planned
+                        result = App.Texts.GetString("Planned")
                 End Select
             End If
 
@@ -58,6 +60,8 @@ Namespace Global.MyEvents.App.ValueConverters
                         result = Performance.PerformanceType.OpenAir
                     ElseIf type.Equals(App.Texts.GetString("Theater")) Then
                         result = Performance.PerformanceType.Theater
+                    ElseIf type.Equals(App.Texts.GetString("Planned")) Then
+                        result = Performance.PerformanceType.Planned
                     End If
                 End If
             End If

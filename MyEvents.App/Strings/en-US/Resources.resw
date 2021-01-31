@@ -468,4 +468,25 @@
   <data name="Link.Header" xml:space="preserve">
     <value>Link</value>
   </data>
+  <data name="Planned" xml:space="preserve">
+    <value>Planned</value>
+  </data>
+  <data name="PlannedEventsSection.Header" xml:space="preserve">
+    <value>Planned Events</value>
+  </data>
+  <data name="DateInTheFuture" xml:space="preserve">
+    <value>(&amp; days)</value>
+  </data>
+  <data name="DateInThePast" xml:space="preserve">
+    <value>(&amp; days ago)</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>(today)</value>
+  </data>
+  <data name="Tomorrow" xml:space="preserve">
+    <value>(tomorrow)</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>(yesterday)</value>
+  </data>
 </root>

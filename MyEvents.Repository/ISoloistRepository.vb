@@ -17,7 +17,7 @@ Namespace Global.MyEvents.Repository
         Function GetAsyncExact(search As String) As Task(Of Soloist)
 
         ' Adds a new Soloist if it does not exist
-        Function Insert(Soloist As Soloist) As Task
+        Function Insert(Soloist As Soloist) As Task(Of Boolean)
 
         ' Clears the database
         Function ClearAsync() As Task

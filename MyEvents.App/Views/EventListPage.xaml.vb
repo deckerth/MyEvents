@@ -1,4 +1,5 @@
 ﻿Imports System.Collections.Specialized
+Imports Microsoft.QueryStringDotNET
 Imports Microsoft.Toolkit.Uwp.Helpers
 Imports MyEvents.App.ValueConverters
 Imports MyEvents.App.ViewModels
@@ -7,6 +8,7 @@ Imports Telerik.Data.Core
 Imports Telerik.UI.Xaml.Controls.Grid
 Imports Telerik.UI.Xaml.Controls.Grid.Commands
 Imports Telerik.UI.Xaml.Controls.Input
+Imports Windows.System
 
 Namespace Global.MyEvents.App.Views
 
@@ -194,23 +196,39 @@ Namespace Global.MyEvents.App.Views
 
     End Class
 
-
     Public NotInheritable Class EventListPage
         Inherits Page
 
         Public Shared Current As EventListPage
         Public Property ViewModel As EventListPageViewModel
 
+        Private _dispatcherQueue As DispatcherQueue
+
         Public Sub New()
             InitializeComponent()
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread()
             Current = Me
             NavigationCacheMode = NavigationCacheMode.Enabled
-            ViewModel = New EventListPageViewModel()
-            DataContext = ViewModel
+            AddHandler DataGrid.GroupDescriptors.CollectionChanged, AddressOf OnGroupCollectionChanged
+        End Sub
+
+
+        Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
+            MyBase.OnNavigatedTo(e)
+            ViewModel = e.Parameter
             ViewModel.SelectedItems = DataGrid.SelectedItems
             AddHandler ViewModel.SelectAll, AddressOf OnSelectAll
             AddHandler ViewModel.DeselectAll, AddressOf OnDeselectAll
-            AddHandler DataGrid.GroupDescriptors.CollectionChanged, AddressOf OnGroupCollectionChanged
+            DataContext = ViewModel
+            AddHandler ViewModel.ActivationEventSelected, AddressOf OnActivationEventSelected
+        End Sub
+
+        Private Sub OnActivationEventSelected()
+            ViewModel.LogText += "+OnActivationEventSelected"
+            If ViewModel.SelectedEvent IsNot Nothing Then
+                ViewModel.LogText += "+Register to scroll"
+                EditEvent_Click(Me, New RoutedEventArgs())
+            End If
         End Sub
 
         Private Sub OnGroupCollectionChanged(sender As Object, e As NotifyCollectionChangedEventArgs)
@@ -251,13 +269,13 @@ Namespace Global.MyEvents.App.Views
                     End If
                 End If
             Else
-                If ViewModel.SelectedEvent IsNot Nothing AndAlso ViewModel.SelectedEvent.Work.Length > 0 Then
+                If ViewModel.SelectedEvent IsNot Nothing Then
                     Frame.Navigate(GetType(EventDetailPage), ViewModel.SelectedEvent)
                 End If
             End If
         End Sub
 
-        Private Async Sub EventSearchBox_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+        Private Sub EventSearchBox_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             ' We only want to get results when it was a user typing,
             ' otherwise we assume the value got filled in by TextMemberPath
             ' Or the handler for SuggestionChosen.
@@ -294,12 +312,11 @@ Namespace Global.MyEvents.App.Views
                 If ViewModel.FilterIsSet Then
                     ViewModel.FilterIsSet = False
                     If ViewModel.IsBackupValid() Then
-                        Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub() ViewModel.RestoreBackup())
+                        _dispatcherQueue.TryEnqueue(Sub() ViewModel.RestoreBackup())
                     Else
-                        Await ViewModel.Progress.SetIndeterministicAsync()
-                        Await DispatcherHelper.ExecuteOnUIThreadAsync(Async Function()
-                                                                          Await ViewModel.GetEventsListAsync()
-                                                                      End Function)
+                        _dispatcherQueue.TryEnqueue(Async Function()
+                                                        Await ViewModel.GetEventsListAsync()
+                                                    End Function)
                         Await ViewModel.Progress.HideAsync()
                     End If
                 End If
@@ -318,15 +335,14 @@ Namespace Global.MyEvents.App.Views
                                                                          x.Contributors.Contains(y, StringComparison.OrdinalIgnoreCase) Or
                                                                          x.Venue.StartsWith(y, StringComparison.OrdinalIgnoreCase))
                         ).ToList()
-
-                Await DispatcherHelper.ExecuteOnUIThreadAsync(Sub()
-                                                                  ViewModel.CreateBackup()
-                                                                  ViewModel.Events.Clear()
-                                                                  For Each match In matches
-                                                                      ViewModel.Events.Add(match)
-                                                                  Next
-                                                                  ViewModel.FilterIsSet = True
-                                                              End Sub)
+                _dispatcherQueue.TryEnqueue(Sub()
+                                                ViewModel.CreateBackup()
+                                                ViewModel.Events.Clear()
+                                                For Each match In matches
+                                                    ViewModel.Events.Add(match)
+                                                Next
+                                                ViewModel.FilterIsSet = True
+                                            End Sub)
 
             End If
 
@@ -405,6 +421,7 @@ Namespace Global.MyEvents.App.Views
         Private Sub OnDeselectAll()
             DataGrid.DeselectAll()
         End Sub
+
     End Class
 
 End Namespace
