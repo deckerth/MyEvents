@@ -56,6 +56,7 @@ Namespace Global.MyEvents.App.ViewModels
         End Property
 
         Public Shared Event Modified()
+        Public Shared Event Saved()
 
         ' <summary>
         ' Gets Or sets whether the underlying model has been modified. 
@@ -142,6 +143,7 @@ Namespace Global.MyEvents.App.ViewModels
             Await Notification.ScheduleNotificationAsync()
             Dim result = Await App.Repository.Events.Upsert(Model)
             IsModified = False
+            RaiseEvent Saved()
             If result <> IEventRepository.UpsertResult.skipped Then
                 Await UpdateIndex()
             End If
@@ -263,7 +265,6 @@ Namespace Global.MyEvents.App.ViewModels
                 If value IsNot Nothing AndAlso Not value.Equals(Model.PerformanceDate) Then
                     Model.PerformanceDate = value
                     IsModified = True
-                    OnPropertyChanged("PerformanceDate")
                     If Not String.IsNullOrWhiteSpace(Model.PerformanceDate) Then
                         Dim dummy As DateTime
                         If Not DateTime.TryParse(Model.PerformanceDate, dummy) Then
@@ -274,6 +275,7 @@ Namespace Global.MyEvents.App.ViewModels
                     Else
                         RemoveErrors("PerformanceDate")
                     End If
+                    OnPropertyChanged("PerformanceDate")
                 End If
             End Set
         End Property

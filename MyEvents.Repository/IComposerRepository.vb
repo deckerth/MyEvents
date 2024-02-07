@@ -19,9 +19,11 @@ Namespace Global.MyEvents.Repository
         ' Adds a new Composer if it does not exist
         Function Insert(Composer As Composer) As Task
 
+        ' Deletes the entry the given name. 
+        Function DeleteAsyncExact(search As String) As Task
+
         ' Clears the database
         Function ClearAsync() As Task
-
 
     End Interface
 

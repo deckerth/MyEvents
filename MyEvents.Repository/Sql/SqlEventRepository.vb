@@ -21,7 +21,7 @@ Namespace Global.MyEvents.Repository.Sql
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Performance)) Implements IEventRepository.GetAsync
 
             Dim parameters As String() = search.Split(" ")
-            Return Await _db.Events.Where(
+            Return Await _db.Events.AsNoTracking().Where(
                 Function(x As Performance) parameters.Any(Function(y As String) x.Composer.Contains(y) Or
                                                                          x.Contributors.Contains(y) Or
                                                                          x.Director.Contains(y) Or
@@ -37,7 +37,7 @@ Namespace Global.MyEvents.Repository.Sql
                                                                          x.Venue.Contains(y) Or
                                                                          x.Work.Contains(y) Or
                                                                          x.PerformanceCountry.Contains(y))
-                ).AsNoTracking().ToListAsync()
+                ).ToListAsync()
 
         End Function
 

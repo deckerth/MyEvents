@@ -199,6 +199,7 @@ Namespace Global.MyEvents.App.ViewModels
                     _performance.PerformanceDate = Date.MinValue
                 End If
                 result = Await _performance.Save()
+                _performance.IsModified = False
                 If result = Repository.IEventRepository.UpsertResult.added Then
                     RaiseEvent OnNewEventCreated(_performance)
                 End If
@@ -206,6 +207,9 @@ Namespace Global.MyEvents.App.ViewModels
                     _performance.PerformanceDate = Nothing
                 End If
             End If
+
+            Views.EventDetailPage.GoBack()
+
             Return result
         End Function
 

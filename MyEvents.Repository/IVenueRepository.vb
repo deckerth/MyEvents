@@ -16,12 +16,17 @@ Namespace Global.MyEvents.Repository
         ' Returns the Venue with the given name. 
         Function GetAsyncExact(search As String) As Task(Of Venue)
 
+        ' Returns the Venue with the given name. 
+        Function GetAsyncExactWithTracking(search As String) As Task(Of Venue)
+
         ' Adds a new Venue if it does not exist
         Function Insert(Venue As Venue) As Task
 
+        ' Deletes the entry the given name. 
+        Function DeleteAsyncExact(search As String) As Task
+
         ' Clears the database
         Function ClearAsync() As Task
-
     End Interface
 
 End Namespace

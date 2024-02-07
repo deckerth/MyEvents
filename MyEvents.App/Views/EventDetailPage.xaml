@@ -7,11 +7,11 @@
     xmlns:viewModels="using:MyEvents.App.ViewModels"
     xmlns:converters="using:MyEvents.App.ValueConverters"
     xmlns:controls="using:MyEvents.App.UserControls"
-    xmlns:ex="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     xmlns:telerik="using:Telerik.UI.Xaml.Controls.Input"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+   mc:Ignorable="d">
 
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="boolToVisConverter" />
@@ -44,7 +44,6 @@
                 RelativePanel.RightOf="PageHeaderText">
                 <AppBarButton x:Name="Save"
                     x:Uid="SaveChangesButton"
-                    Click="Save_Click"
                     Command="{x:Bind ViewModel.SaveCommand}"
                     Icon="Save"
                     Visibility="{x:Bind ViewModel.IsInEdit, Converter={StaticResource boolToVisConverter}, Mode=OneWay}" />
@@ -99,7 +98,6 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True"/>
-
                         <ComboBox
                            x:Name="EventTypeList"
                            x:Uid="EventType"
@@ -114,7 +112,7 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
 
-                        <AutoSuggestBox
+                        <controls:AdvancedAutoSuggestBox
                            x:Name="Composer"
                            x:Uid="Composer"
                            Width="300"
@@ -124,8 +122,9 @@
                            RelativePanel.Below="EventType"
                            Text="{x:Bind ViewModel.Performance.Composer, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           TextChanged="OnComposer_TextChanged"/>
-                        <ComboBox
+                           TextChanged="OnComposer_TextChanged"
+                           DeleteSuggestion="OnComposer_DeleteSuggestion"/>
+                       <ComboBox
                            x:Name="Composers"
                            x:Uid="Composer"
                            MinWidth="300"
@@ -164,7 +163,7 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                            />
 
-                        <AutoSuggestBox
+                        <controls:AdvancedAutoSuggestBox
                            x:Name="Director"
                            x:Uid="Director"
                            Width="300"
@@ -174,7 +173,8 @@
                            RelativePanel.Below="Work"
                            Text="{x:Bind ViewModel.Performance.Director, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           TextChanged="OnDirector_TextChanged"/>
+                           TextChanged="OnDirector_TextChanged"
+                           DeleteSuggestion="OnDirector_DeleteSuggestion" />
                         <ComboBox
                            x:Name="Directors"
                            x:Uid="Director"
@@ -200,9 +200,8 @@
                            Text="{x:Bind ViewModel.Performance.Performer, Mode=TwoWay}"
                            Delimiter=" / "
                            Suggestions="{x:Bind AllPerformers.Soloists,Mode=OneWay}"
-                           QueryIcon="{ex:SymbolIconSource Symbol=People}" 
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           />
+                           QueryIcon="{ui:SymbolIconSource Symbol=People}"/>
                         <ComboBox
                            x:Name="Soloists"
                            x:Uid="Soloist"
@@ -228,9 +227,8 @@
                            Text="{x:Bind ViewModel.Performance.Contributors, Mode=TwoWay}"
                            Delimiter=" / "
                            Suggestions="{x:Bind AllPerformers.Contributors,Mode=OneWay}"
-                           QueryIcon="{ex:SymbolIconSource Symbol=People}" 
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           />
+                           QueryIcon="{ui:SymbolIconSource Symbol=People}"/>
                         <ComboBox
                            x:Name="ContributorsList"
                            x:Uid="Contributors"
@@ -245,7 +243,7 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
 
-                        <AutoSuggestBox
+                        <controls:AdvancedAutoSuggestBox
                            x:Name="Venue"
                            x:Uid="Venue"
                            Width="300"
@@ -255,7 +253,8 @@
                            RelativePanel.Below="Contributors"
                            Text="{x:Bind ViewModel.Performance.Venue, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                           TextChanged="OnVenue_TextChanged"/>
+                           TextChanged="OnVenue_TextChanged"
+                           DeleteSuggestion="OnVenue_DeleteSuggestion" />
                         <ComboBox
                            x:Name="Venues"
                            x:Uid="Venue"
@@ -270,7 +269,7 @@
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},Mode=OneWay}"
                             />
 
-                        <AutoSuggestBox
+                        <controls:AdvancedAutoSuggestBox
                            x:Name="Country"
                            x:Uid="Country"
                            Width="300"
@@ -280,8 +279,8 @@
                            RelativePanel.AlignVerticalCenterWith="Venue"
                            Text="{x:Bind ViewModel.Performance.PerformanceCountry, Mode=TwoWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
-                            
-                           TextChanged="OnCountry_TextChanged"/>
+                           TextChanged="OnCountry_TextChanged"
+                           DeleteSuggestion="OnCountry_DeleteSuggestion" />
                         <ComboBox
                            x:Name="Countries"
                            x:Uid="Country"

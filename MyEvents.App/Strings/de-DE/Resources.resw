@@ -489,4 +489,13 @@
   <data name="Yesterday" xml:space="preserve">
     <value>(gestern)</value>
   </data>
+  <data name="SortOrder.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sortierung ändern</value>
+  </data>
+  <data name="SortOrderComposerWork.Text" xml:space="preserve">
+    <value>Komponist, Werk</value>
+  </data>
+  <data name="SortOrderReset.Text" xml:space="preserve">
+    <value>Sortierung aufheben</value>
+  </data>
 </root>

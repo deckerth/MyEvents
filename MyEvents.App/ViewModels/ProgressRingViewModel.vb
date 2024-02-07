@@ -61,9 +61,9 @@ Namespace Global.MyEvents.App.ViewModels
             End If
         End Sub
 
-        Public Function IncrementAsync(delta As Integer) As Task
+        Public Sub IncrementOnDispatcher(delta As Integer)
             _dispatcherQueue.TryEnqueue(Sub() Increment(delta))
-        End Function
+        End Sub
 
         Public Sub SetDeterministic(total As Integer)
             BooksProcessed = 0

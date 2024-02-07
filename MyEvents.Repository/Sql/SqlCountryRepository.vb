@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Country)) Implements ICountryRepository.GetAsync
 
-            Return Await _db.Countries.Where(Function(x As Country) x.Name.Contains(search)).AsNoTracking().ToListAsync()
+            Return Await _db.Countries.AsNoTracking().Where(Function(x As Country) x.Name.Contains(search)).ToListAsync()
 
         End Function
 
@@ -62,6 +62,13 @@ Namespace Global.MyEvents.Repository.Sql
             Await _db.SaveChangesAsync()
         End Function
 
+        Public Async Function DeleteAsyncExact(search As String) As Task Implements ICountryRepository.DeleteAsyncExact
+            Dim toDelete = Await _db.Countries.AsNoTracking().FirstOrDefaultAsync(Function(x As Country) x.Name = search)
+            If toDelete IsNot Nothing Then
+                _db.Entry(toDelete).State = EntityState.Deleted
+            End If
+            Await _db.SaveChangesAsync()
+        End Function
     End Class
 
 End Namespace

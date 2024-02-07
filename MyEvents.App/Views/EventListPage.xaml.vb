@@ -86,6 +86,22 @@ Namespace Global.MyEvents.App.Views
         End Function
     End Class
 
+    Public Class WorkDataTemplateSelector
+        Inherits DataTemplateSelector
+
+        Public Property EditTemplate As DataTemplate
+        Public Property DisplayTemplate As DataTemplate
+
+        Protected Overrides Function SelectTemplateCore(item As Object, container As DependencyObject) As DataTemplate
+            Dim row = DirectCast(item, EventViewModel)
+            If row.IsInEdit Then
+                Return EditTemplate
+            Else
+                Return DisplayTemplate
+            End If
+        End Function
+    End Class
+
     Public Class DirectorDataTemplateSelector
         Inherits DataTemplateSelector
 
@@ -202,16 +218,19 @@ Namespace Global.MyEvents.App.Views
         Public Shared Current As EventListPage
         Public Property ViewModel As EventListPageViewModel
 
+        Private ComposerWorkSortDescriptors As New List(Of SortDescriptorBase)
+
         Private _dispatcherQueue As DispatcherQueue
 
         Public Sub New()
             InitializeComponent()
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread()
             Current = Me
+            ComposerWorkSortDescriptors.Add(DataGrid.SortDescriptors.Item(0)) 'Composer
+            ComposerWorkSortDescriptors.Add(DataGrid.SortDescriptors.Item(1)) 'Work
             NavigationCacheMode = NavigationCacheMode.Enabled
             AddHandler DataGrid.GroupDescriptors.CollectionChanged, AddressOf OnGroupCollectionChanged
         End Sub
-
 
         Protected Overrides Sub OnNavigatedTo(e As NavigationEventArgs)
             MyBase.OnNavigatedTo(e)
@@ -219,6 +238,8 @@ Namespace Global.MyEvents.App.Views
             ViewModel.SelectedItems = DataGrid.SelectedItems
             AddHandler ViewModel.SelectAll, AddressOf OnSelectAll
             AddHandler ViewModel.DeselectAll, AddressOf OnDeselectAll
+            AddHandler ViewModel.ResetSorting, AddressOf OnResetSorting
+            AddHandler ViewModel.SortComposerWork, AddressOf OnSortComposerWork
             DataContext = ViewModel
             AddHandler ViewModel.ActivationEventSelected, AddressOf OnActivationEventSelected
         End Sub
@@ -246,8 +267,8 @@ Namespace Global.MyEvents.App.Views
         End Sub
 
         Private Sub DuplicateEvent_Click(sender As Object, e As RoutedEventArgs)
-            If ViewModel.SelectedEvent IsNot Nothing AndAlso ViewModel.SelectedEvent.Work.Length > 0 Then
-                Dim duplicate = ViewModel.SelectedEvent.Model.Clone()
+            If DataGrid.SelectedItems.Count = 1 Then
+                Dim duplicate = DataGrid.SelectedItems.ElementAt(0).Model.Clone()
                 duplicate.Id = Performance.NewPerformanceId
                 Dim duplicateViewModel = New EventViewModel(duplicate)
                 Frame.Navigate(GetType(EventDetailPage), duplicateViewModel)
@@ -255,22 +276,16 @@ Namespace Global.MyEvents.App.Views
         End Sub
 
         Private Sub EditEvent_Click(sender As Object, e As RoutedEventArgs)
-            If ViewModel.MultipleSelectionMode Then
-                If DataGrid.SelectedItems.Count > 0 Then
-                    If DataGrid.SelectedItems.Count = 1 Then
-                        Frame.Navigate(GetType(EventDetailPage), DataGrid.SelectedItems.ElementAt(0))
-                    Else
-                        Dim eventSet As New List(Of EventViewModel)
-                        For Each b In ViewModel.SelectedItems
-                            eventSet.Add(b)
-                        Next
-                        Dim eventSetViewModel As New MultipleEventsViewModel(eventSet)
-                        Frame.Navigate(GetType(EventDetailPage), eventSetViewModel)
-                    End If
-                End If
-            Else
-                If ViewModel.SelectedEvent IsNot Nothing Then
-                    Frame.Navigate(GetType(EventDetailPage), ViewModel.SelectedEvent)
+            If DataGrid.SelectedItems.Count > 0 Then
+                If DataGrid.SelectedItems.Count = 1 Then
+                    Frame.Navigate(GetType(EventDetailPage), DataGrid.SelectedItems.ElementAt(0))
+                Else
+                    Dim eventSet As New List(Of EventViewModel)
+                    For Each b In ViewModel.SelectedItems
+                        eventSet.Add(b)
+                    Next
+                    Dim eventSetViewModel As New MultipleEventsViewModel(eventSet)
+                    Frame.Navigate(GetType(EventDetailPage), eventSetViewModel)
                 End If
             End If
         End Sub
@@ -356,9 +371,9 @@ Namespace Global.MyEvents.App.Views
 
         End Sub
 
-        Private Async Sub OnComposer_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
+        Private Async Sub OnComposer_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, e As AutoSuggestBoxTextChangedEventArgs)
             Dim hits As IEnumerable(Of Composer) = Await App.Repository.Composers.GetAsync(sender.Text)
-            Dim dataset As New List(Of String)
+            Dim dataset As New Collection(Of String)
             For Each a In hits
                 dataset.Add(a.Name)
             Next
@@ -366,15 +381,26 @@ Namespace Global.MyEvents.App.Views
             sender.ItemsSource = dataset
         End Sub
 
-        Private Async Sub OnDirector_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
-            Dim hits As IEnumerable(Of Director) = Await App.Repository.Directors.GetAsync(sender.Text)
-            Dim dataset As New List(Of String)
-            For Each a In hits
-                dataset.Add(a.Name)
-            Next
-            ' Set the ItemsSource to be your filtered dataset
-            sender.ItemsSource = dataset
+        Private Async Sub OnComposer_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Composers.DeleteAsyncExact(e.SuggestionToDelete)
         End Sub
+
+        Private Async Sub OnDirector_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+            If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
+                Dim hits As IEnumerable(Of Director) = Await App.Repository.Directors.GetAsync(sender.Text)
+                Dim dataset As New Collection(Of String)
+                For Each a In hits
+                    dataset.Add(a.Name)
+                Next
+                ' Set the ItemsSource to be your filtered dataset
+                sender.ItemsSource = dataset
+            End If
+        End Sub
+
+        Private Async Sub OnDirector_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Directors.DeleteAsyncExact(e.SuggestionToDelete)
+        End Sub
+
         Private Async Sub OnSoloist_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
             Dim hits As IEnumerable(Of Soloist) = Await App.Repository.Soloists.GetAsync(sender.Text)
             Dim dataset As New List(Of String)
@@ -384,14 +410,32 @@ Namespace Global.MyEvents.App.Views
             ' Set the ItemsSource to be your filtered dataset
             sender.ItemsSource = dataset
         End Sub
-        Private Async Sub OnVenue_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
-            Dim hits As IEnumerable(Of Venue) = Await App.Repository.Venues.GetAsync(sender.Text)
-            Dim dataset As New List(Of String)
-            For Each a In hits
-                dataset.Add(a.Name)
-            Next
-            ' Set the ItemsSource to be your filtered dataset
-            sender.ItemsSource = dataset
+
+        Private Async Sub OnVenue_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+            If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
+                Dim input As String = sender.Text.Trim()
+                Dim prefix As String = ""
+                Dim lastSlash = input.LastIndexOf("/")
+                If lastSlash > 0 Then
+                    If input.Length = lastSlash + 1 Then
+                        Return ' wait for futher input
+                    Else
+                        prefix = input.Substring(0, lastSlash + 1) + " "
+                        input = input.Substring(lastSlash + 1).Trim()
+                    End If
+                End If
+                Dim hits As IEnumerable(Of Venue) = Await App.Repository.Venues.GetAsync(input)
+                Dim dataset As New Collection(Of String)
+                For Each a In hits
+                    dataset.Add(prefix + a.Name)
+                Next
+                ' Set the ItemsSource to be your filtered dataset
+                sender.ItemsSource = dataset
+            End If
+        End Sub
+
+        Private Async Sub OnVenue_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Venues.DeleteAsyncExact(e.SuggestionToDelete)
         End Sub
 
         Private Async Sub OnPerformer_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
@@ -404,14 +448,20 @@ Namespace Global.MyEvents.App.Views
             sender.ItemsSource = dataset
         End Sub
 
-        Private Async Sub OnCountry_TextChanged(sender As RadAutoCompleteBox, e As TextChangedEventArgs)
-            Dim hits As IEnumerable(Of Country) = Await App.Repository.Countries.GetAsync(sender.Text)
-            Dim dataset As New List(Of String)
-            For Each a In hits
-                dataset.Add(a.Name)
-            Next
-            ' Set the ItemsSource to be your filtered dataset
-            sender.ItemsSource = dataset
+        Private Async Sub OnCountry_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+            If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
+                Dim hits As IEnumerable(Of Country) = Await App.Repository.Countries.GetAsync(sender.Text)
+                Dim dataset As New Collection(Of String)
+                For Each a In hits
+                    dataset.Add(a.Name)
+                Next
+                ' Set the ItemsSource to be your filtered dataset
+                sender.ItemsSource = dataset
+            End If
+        End Sub
+
+        Private Async Sub OnCountry_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Countries.DeleteAsyncExact(e.SuggestionToDelete)
         End Sub
 
         Private Sub OnSelectAll()
@@ -422,6 +472,31 @@ Namespace Global.MyEvents.App.Views
             DataGrid.DeselectAll()
         End Sub
 
+#Region "Sorting"
+        Private Sub OnResetSorting()
+            DataGrid.SortDescriptors.Clear()
+        End Sub
+
+        Private Sub OnSortComposerWork()
+            OnResetSorting()
+            DataGrid.SortDescriptors.Add(ComposerWorkSortDescriptors.Item(0)) 'Composer
+            DataGrid.SortDescriptors.Add(ComposerWorkSortDescriptors.Item(1)) 'Work
+        End Sub
+
+        Private Sub AdvancedAutoSuggestBox_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+
+        End Sub
+
+        Private Sub AdvancedAutoSuggestBox_DeleteSuggestion_1(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+
+        End Sub
+
+        Private Sub AdvancedAutoSuggestBox_DeleteSuggestion_2(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+
+        End Sub
+
+
+#End Region
     End Class
 
 End Namespace

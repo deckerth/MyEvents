@@ -21,7 +21,7 @@
                 Text="{x:Bind CurrentInput,Mode=TwoWay}"
                 SuggestedItemsSource="{x:Bind SuggestedTokens,Mode=OneWay}"
                 ItemsSource="{x:Bind Items,Mode=TwoWay}"
-                TokenItemAdding="TokenBox_TokenItemAdding"
+                TokenItemAdding="TokenBox_TokenItemAdding" UseLayoutRounding="True"
                 >
                 <controls:TokenizingTextBox.SuggestedItemTemplate>
                     <DataTemplate x:DataType="local:Token">

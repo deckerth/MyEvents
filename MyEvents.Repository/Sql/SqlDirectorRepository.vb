@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Director)) Implements IDirectorRepository.GetAsync
 
-            Return Await _db.Directors.Where(Function(x As Director) x.Name.Contains(search)).AsNoTracking().ToListAsync()
+            Return Await _db.Directors.AsNoTracking().Where(Function(x As Director) x.Name.Contains(search)).ToListAsync()
 
             'Dim parameters As String() = search.Split(" ")
             'Return Await _db.Directors.Where(
@@ -69,6 +69,13 @@ Namespace Global.MyEvents.Repository.Sql
             Await _db.SaveChangesAsync()
         End Function
 
+        Public Async Function DeleteAsyncExact(search As String) As Task Implements IDirectorRepository.DeleteAsyncExact
+            Dim toDelete = Await _db.Directors.AsNoTracking().FirstOrDefaultAsync(Function(x As Director) x.Name = search)
+            If toDelete IsNot Nothing Then
+                _db.Entry(toDelete).State = EntityState.Deleted
+            End If
+            Await _db.SaveChangesAsync()
+        End Function
     End Class
 
 End Namespace

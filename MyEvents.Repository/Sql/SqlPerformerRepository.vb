@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Performer)) Implements IPerformerRepository.GetAsync
 
-            Return Await _db.Performers.Where(Function(x As Performer) x.Name.Contains(search)).AsNoTracking().ToListAsync()
+            Return Await _db.Performers.AsNoTracking().Where(Function(x As Performer) x.Name.Contains(search)).ToListAsync()
 
         End Function
 

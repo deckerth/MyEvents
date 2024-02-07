@@ -25,6 +25,14 @@
             Return Not String.IsNullOrEmpty(a)
         End Function
 
+        Public Shared Function OpNotAndGreater0(a As Object, b As Integer) As Boolean
+            Return a IsNot Nothing AndAlso b > 0
+        End Function
+
+        Public Shared Function OpNotAndEqual1(a As Object, b As Integer) As Boolean
+            Return a IsNot Nothing AndAlso b = 1
+        End Function
+
     End Class
 
 End Namespace

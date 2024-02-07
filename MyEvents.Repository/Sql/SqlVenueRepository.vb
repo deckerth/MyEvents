@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Venue)) Implements IVenueRepository.GetAsync
 
-            Return Await _db.Venues.Where(Function(x As Venue) x.Name.Contains(search)).AsNoTracking().ToListAsync()
+            Return Await _db.Venues.AsNoTracking().Where(Function(x As Venue) x.Name.Contains(search)).ToListAsync()
 
         End Function
 
@@ -27,18 +27,27 @@ Namespace Global.MyEvents.Repository.Sql
             Return Await _db.Venues.AsNoTracking().FirstOrDefaultAsync(Function(x As Venue) x.Name = search)
         End Function
 
+        Public Async Function GetAsyncExactWithTracking(search As String) As Task(Of Venue) Implements IVenueRepository.GetAsyncExactWithTracking
+            Return Await _db.Venues.FirstOrDefaultAsync(Function(x As Venue) x.Name = search)
+        End Function
+
         Public Async Function GetAsync(id As Guid) As Task(Of Venue) Implements IVenueRepository.GetAsync
             Return Await _db.Venues.AsNoTracking().FirstOrDefaultAsync(Function(x As Venue) x.Id = id)
         End Function
 
         Public Async Function Insert(Venue As Venue) As Task Implements IVenueRepository.Insert
-            Dim existing As Venue = Await GetAsyncExact(Venue.Name)
+            Dim existing As Venue = Await GetAsyncExactWithTracking(Venue.Name)
             If existing Is Nothing Then
                 Await _db.Venues.AddAsync(Venue)
                 Await _db.SaveChangesAsync()
             ElseIf Not String.IsNullOrEmpty(Venue.Country) AndAlso Not Venue.Country.Equals(existing.Country) Then
                 existing.Country = Venue.Country
-                _db.Venues.Update(existing)
+                Try
+                    _db.Venues.Update(existing)
+                    Await _db.SaveChangesAsync()
+                Catch ex As Exception
+                    Dim x = 0
+                End Try
             End If
         End Function
 
@@ -63,6 +72,13 @@ Namespace Global.MyEvents.Repository.Sql
             Await _db.SaveChangesAsync()
         End Function
 
+        Public Async Function DeleteAsyncExact(search As String) As Task Implements IVenueRepository.DeleteAsyncExact
+            Dim toDelete = Await _db.Venues.AsNoTracking().FirstOrDefaultAsync(Function(x As Venue) x.Name = search)
+            If toDelete IsNot Nothing Then
+                _db.Entry(toDelete).State = EntityState.Deleted
+            End If
+            Await _db.SaveChangesAsync()
+        End Function
     End Class
 
 End Namespace

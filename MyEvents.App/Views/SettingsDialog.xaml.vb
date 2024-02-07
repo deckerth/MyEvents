@@ -54,12 +54,12 @@ Namespace Global.MyEvents.App.Views
         End Sub
 
         Private Async Sub ImportDB_Click(sender As Object, e As RoutedEventArgs) Handles ImportDB.Click
-            Await SettingsDialog_PrimaryButtonClick(sender, Nothing)
+            Await SettingsDialog_PrimaryButtonClick(Me, Nothing)
             Await ViewModel.OnImportDB()
         End Sub
 
         Private Async Sub ExportDB_Click(sender As Object, e As RoutedEventArgs) Handles ExportDB.Click
-            Await SettingsDialog_PrimaryButtonClick(sender, Nothing)
+            Await SettingsDialog_PrimaryButtonClick(Me, Nothing)
             Await ViewModel.OnExportDB()
         End Sub
     End Class

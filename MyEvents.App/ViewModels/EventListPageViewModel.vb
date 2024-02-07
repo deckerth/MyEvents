@@ -39,8 +39,10 @@ Namespace Global.MyEvents.App.ViewModels
             ExportDbCommand = New RelayCommand(AddressOf OnExportDB)
             DeleteEventCommand = New RelayCommand(AddressOf OnDeleteEvent)
             InitalizeSelectionCommands()
+            InitalizeSortCommands()
             AddHandler EventViewModel.Modified, AddressOf OnEventModified
             AddHandler EventViewModel.Deleted, AddressOf OnEventDeleted
+            AddHandler EventViewModel.Saved, AddressOf OnEventSaved
             AddHandler EventDetailPageViewModel.OnNewEventCreated, AddressOf OnEventCreated
         End Sub
 
@@ -72,6 +74,10 @@ Namespace Global.MyEvents.App.ViewModels
             IsModified = True
         End Sub
 
+        Private Sub OnEventSaved()
+            IsModified = Events.Where(Function(e) e.IsModified).FirstOrDefault() IsNot Nothing
+        End Sub
+
         Private Sub OnEventCreated(newBook As EventViewModel)
             _dispatcherQueue.TryEnqueue(Sub() _events.Add(newBook))
             If ListBackup IsNot Nothing Then
@@ -89,7 +95,7 @@ Namespace Global.MyEvents.App.ViewModels
             End Set
         End Property
 
-        Private _selectedEvent As New EventViewModel(Nothing)
+        Private _selectedEvent As EventViewModel
         Public Property SelectedEvent As EventViewModel
             Get
                 Return _selectedEvent
@@ -189,6 +195,29 @@ Namespace Global.MyEvents.App.ViewModels
         End Sub
 #End Region
 
+#Region "Sorting"
+
+        Public ResetSortingCommand As RelayCommand
+        Public SortComposerWorkCommand As RelayCommand
+
+        Public Event ResetSorting()
+        Public Event SortComposerWork()
+
+        Private Sub InitalizeSortCommands()
+            ResetSortingCommand = New RelayCommand(AddressOf OnResetSorting)
+            SortComposerWorkCommand = New RelayCommand(AddressOf OnSortComposerWork)
+        End Sub
+
+        Private Sub OnResetSorting()
+            RaiseEvent ResetSorting()
+        End Sub
+
+        Private Sub OnSortComposerWork()
+            RaiseEvent SortComposerWork()
+        End Sub
+
+#End Region
+
 #Region "DataAccess"
         Public Event ActivationEventSelected()
 
@@ -208,7 +237,9 @@ Namespace Global.MyEvents.App.ViewModels
                     End If
                     Events.Clear()
                     For Each b In repo
-                        Events.Add(New EventViewModel(b) With {.Validate = True})
+                        Dim vm = New EventViewModel(b) With {.Validate = True}
+                        AddHandler vm.ErrorsChanged, AddressOf OnErrorsChanged
+                        Events.Add(vm)
                     Next
                     Dim activationEvent = GetEventForActivation()
                     If activationEvent IsNot Nothing Then
@@ -230,10 +261,22 @@ Namespace Global.MyEvents.App.ViewModels
             End Try
         End Function
 
+        Private Sub OnErrorsChanged(sender As Object, e As DataErrorsChangedEventArgs)
+            Dim vm = DirectCast(sender, EventViewModel)
+            Dim errors = vm.GetErrors(e.PropertyName)
+            Dim enumerator = errors.GetEnumerator()
+            If enumerator.MoveNext() Then
+                ErrorText = enumerator.Current
+            Else
+                ErrorText = ""
+            End If
+        End Sub
+
         Public Function GetEvent(title As String, eventDate As String) As EventViewModel
             Return Events.FirstOrDefault(Function(x) x.Text1.Equals(title) AndAlso x.PerformanceDate.Equals(eventDate))
         End Function
 
+        ' The app was invoked by clicking on an event notification -> Navigate to the event
         Friend Function GetEventForActivation() As EventViewModel
             If ActivationArgs IsNot Nothing Then
                 Try
@@ -279,30 +322,6 @@ Namespace Global.MyEvents.App.ViewModels
 
         Public DeleteEventCommand As RelayCommand
 
-        Private Async Function DeleteEventAsync(toDelete As EventViewModel) As Task
-            If toDelete IsNot Nothing Then
-                Dim dialog = New MessageDialog(App.Texts.GetString("DeleteEventQuestion"))
-
-                ' Add commands and set their callbacks 
-                dialog.Commands.Add(New UICommand(App.Texts.GetString("Yes")))
-                dialog.Commands.Add(New UICommand(App.Texts.GetString("Cancel"), Sub(command) Cancelled = True))
-
-                Cancelled = False
-                Await dialog.ShowAsync()
-
-                If Cancelled = False Then
-                    Try
-                        Await App.Repository.Events.DeleteAsync(toDelete.Id)
-                        Events.Remove(toDelete)
-                        If ListBackup IsNot Nothing Then
-                            ListBackup.Remove(toDelete)
-                        End If
-                    Catch ex As Exception
-                    End Try
-                End If
-            End If
-        End Function
-
         Private Sub OnEventDeleted(sender As EventViewModel)
             Events.Remove(sender)
             If ListBackup IsNot Nothing Then
@@ -334,24 +353,17 @@ Namespace Global.MyEvents.App.ViewModels
 
         Public Async Sub OnDeleteEvent()
             Await Synchronize() ' New events may not yet have been saved. Unsaved events cannot be deleted.
-            If MultipleSelectionMode Then
-                If SelectedItems.Count > 0 Then
-                    If SelectedItems.Count = 1 Then
-                        Await DeleteEventsAsync(SelectedItems.ElementAt(0))
-                    Else
-                        Dim eventSet As New List(Of EventViewModel)
-                        For Each b In SelectedItems
-                            eventSet.Add(b)
-                        Next
-                        Await DeleteEventsAsync(eventSet)
-                    End If
-                End If
-            Else
-                If SelectedEvent IsNot Nothing Then
-                    Await DeleteEventAsync(SelectedEvent)
+            If SelectedItems.Count > 0 Then
+                If SelectedItems.Count = 1 Then
+                    Await DeleteEventsAsync(SelectedItems.ElementAt(0))
+                Else
+                    Dim eventSet As New List(Of EventViewModel)
+                    For Each b In SelectedItems
+                        eventSet.Add(b)
+                    Next
+                    Await DeleteEventsAsync(eventSet)
                 End If
             End If
-
         End Sub
 
 #End Region
@@ -375,15 +387,25 @@ Namespace Global.MyEvents.App.ViewModels
             If File IsNot Nothing Then
                 Using stream = Await File.OpenStreamForWriteAsync()
                     stream.SetLength(0)
-                    ' Prevent updates to the remote version of the file until we finish making changes And call CompleteUpdatesAsync.
-                    CachedFileManager.DeferUpdates(File)
+                    ' Prevent updates to the remote version of the file until we finish making changes And call CompleteUpdatesAsync.  Does not work with Windows 11.
+                    Dim updatesDeferred As Boolean
+                    Try
+                        CachedFileManager.DeferUpdates(File)
+                        updatesDeferred = True
+                    Catch ex As Exception
+                        updatesDeferred = False
+                    End Try
                     Await App.Repository.ImportExportService.ExportAsync(stream)
 
-                    Dim status As FileUpdateStatus = Await CachedFileManager.CompleteUpdatesAsync(File)
-                    If status = FileUpdateStatus.Complete Then
-                        Await New MessageDialog(App.Texts.GetString("DatabaseSaved")).ShowAsync()
+                    If updatesDeferred Then
+                        Dim status As FileUpdateStatus = Await CachedFileManager.CompleteUpdatesAsync(File)
+                        If status = FileUpdateStatus.Complete Then
+                            Await New MessageDialog(App.Texts.GetString("DatabaseSaved")).ShowAsync()
+                        Else
+                            Await New MessageDialog(App.Texts.GetString("DatabaseNotSaved")).ShowAsync()
+                        End If
                     Else
-                        Await New MessageDialog(App.Texts.GetString("DatabaseNotSaved")).ShowAsync()
+                        Await New MessageDialog(App.Texts.GetString("DatabaseSaved")).ShowAsync()
                     End If
                 End Using
             End If
@@ -442,9 +464,14 @@ Namespace Global.MyEvents.App.ViewModels
             Await App.Repository.Soloists.ClearAsync()
             Await App.Repository.Venues.ClearAsync()
             Await App.Repository.Countries.ClearAsync()
+            Dim c = 0
             For Each e In Events
                 Await e.UpdateIndex()
-                Await Progress.IncrementAsync(1)
+                c += 1
+                Progress.IncrementOnDispatcher(1)
+                If c >= 101 Then
+                    c = c
+                End If
             Next
             'Await App.Repository.EndMassUpdateAsync()
 

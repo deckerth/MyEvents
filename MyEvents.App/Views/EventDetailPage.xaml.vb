@@ -25,6 +25,14 @@ Namespace Global.MyEvents.App.Views
             End If
         End Function
 
+        Public Shared Sub GoBack()
+            If currentPage IsNot Nothing Then
+                If currentPage.Frame.CanGoBack Then
+                    currentPage.Frame.GoBack()
+                End If
+            End If
+        End Sub
+
         Public Function CheckCanBeLeft() As Boolean
             If ViewModel.MultipleEvents Then
                 Return Not ViewModel.Events.IsModified
@@ -85,12 +93,6 @@ Namespace Global.MyEvents.App.Views
 
         End Sub
 
-        Private Sub Save_Click(sender As Object, e As RoutedEventArgs)
-            If Frame.CanGoBack Then
-                Frame.GoBack()
-            End If
-        End Sub
-
         Private Async Sub CancelEditButton_Click(sender As Object, e As RoutedEventArgs)
             If ViewModel.Performance.IsModified Then
                 Dim result As ContentDialogResult = Await SaveChangesDialog()
@@ -107,10 +109,10 @@ Namespace Global.MyEvents.App.Views
 
         End Sub
 
-        Private Async Sub OnComposer_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+        Private Async Sub OnComposer_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
                 Dim hits = Await App.Repository.Composers.GetAsync(sender.Text)
-                Dim dataset As New List(Of String)
+                Dim dataset As New Collection(Of String)
                 For Each a In hits
                     dataset.Add(a.Name)
                 Next
@@ -119,16 +121,24 @@ Namespace Global.MyEvents.App.Views
             End If
         End Sub
 
-        Private Async Sub OnDirector_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+        Private Async Sub OnComposer_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Composers.DeleteAsyncExact(e.SuggestionToDelete)
+        End Sub
+
+        Private Async Sub OnDirector_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
                 Dim hits As IEnumerable(Of Director) = Await App.Repository.Directors.GetAsync(sender.Text)
-                Dim dataset As New List(Of String)
+                Dim dataset As New Collection(Of String)
                 For Each a In hits
                     dataset.Add(a.Name)
                 Next
                 ' Set the ItemsSource to be your filtered dataset
                 sender.ItemsSource = dataset
             End If
+        End Sub
+
+        Private Async Sub OnDirector_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Directors.DeleteAsyncExact(e.SuggestionToDelete)
         End Sub
 
         Private Async Sub OnSoloist_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
@@ -154,7 +164,7 @@ Namespace Global.MyEvents.App.Views
             End If
         End Sub
 
-        Private Async Sub OnVenue_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+        Private Async Sub OnVenue_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
                 Dim input As String = sender.Text.Trim()
                 Dim prefix As String = ""
@@ -168,13 +178,25 @@ Namespace Global.MyEvents.App.Views
                     End If
                 End If
                 Dim hits As IEnumerable(Of Venue) = Await App.Repository.Venues.GetAsync(input)
-                Dim dataset As New List(Of String)
+                Dim dataset As New Collection(Of String)
                 For Each a In hits
                     dataset.Add(prefix + a.Name)
                 Next
                 ' Set the ItemsSource to be your filtered dataset
                 sender.ItemsSource = dataset
             End If
+        End Sub
+
+        Private Async Sub OnVenue_SuggestionChosen(sender As UserControls.AdvancedAutoSuggestBox, args As UserControls.AdvancedAutoSuggestBoxSuggesttionChosenArgs) Handles Venue.SuggestionChosen
+            Dim selected = args.ChosenSuggestion
+            Dim entry As Venue = Await App.Repository.Venues.GetAsyncExact(selected)
+            If entry IsNot Nothing Then
+                ViewModel.Performance.PerformanceCountry = entry.Country
+            End If
+        End Sub
+
+        Private Async Sub OnVenue_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Venues.DeleteAsyncExact(e.SuggestionToDelete)
         End Sub
 
         Private Async Sub OnContributors_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
@@ -189,10 +211,10 @@ Namespace Global.MyEvents.App.Views
             End If
         End Sub
 
-        Private Async Sub OnCountry_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+        Private Async Sub OnCountry_TextChanged(sender As UserControls.AdvancedAutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
                 Dim hits As IEnumerable(Of Country) = Await App.Repository.Countries.GetAsync(sender.Text)
-                Dim dataset As New List(Of String)
+                Dim dataset As New Collection(Of String)
                 For Each a In hits
                     dataset.Add(a.Name)
                 Next
@@ -201,13 +223,10 @@ Namespace Global.MyEvents.App.Views
             End If
         End Sub
 
-        Private Async Sub Venue_SuggestionChosen(sender As AutoSuggestBox, args As AutoSuggestBoxSuggestionChosenEventArgs) Handles Venue.SuggestionChosen
-            Dim selected = args.SelectedItem
-            Dim entry As Venue = Await App.Repository.Venues.GetAsyncExact(selected)
-            If entry IsNot Nothing Then
-                ViewModel.Performance.PerformanceCountry = entry.Country
-            End If
+        Private Async Sub OnCountry_DeleteSuggestion(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
+            Await App.Repository.Countries.DeleteAsyncExact(e.SuggestionToDelete)
         End Sub
+
     End Class
 
 End Namespace

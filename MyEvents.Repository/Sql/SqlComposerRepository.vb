@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Composer)) Implements IComposerRepository.GetAsync
 
-            Return Await _db.Composers.Where(Function(x As Composer) x.Name.Contains(search)).AsNoTracking().ToListAsync()
+            Return Await _db.Composers.AsNoTracking().Where(Function(x As Composer) x.Name.ToLowerInvariant.Contains(search.ToLowerInvariant)).ToListAsync()
 
         End Function
 
@@ -33,9 +33,6 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function Insert(Composer As Composer) As Task Implements IComposerRepository.Insert
             If Await GetAsyncExact(Composer.Name) Is Nothing Then
-                If Composer.Name.Contains("Carriger, Gail") Then
-                    Dim x = 0
-                End If
                 Await _db.Composers.AddAsync(Composer)
                 Await _db.SaveChangesAsync()
             End If
@@ -59,6 +56,14 @@ Namespace Global.MyEvents.Repository.Sql
             For Each b In _db.Composers
                 _db.Entry(b).State = EntityState.Deleted
             Next
+            Await _db.SaveChangesAsync()
+        End Function
+
+        Public Async Function DeleteAsyncExact(search As String) As Task Implements IComposerRepository.DeleteAsyncExact
+            Dim toDelete = Await _db.Composers.AsNoTracking().FirstOrDefaultAsync(Function(x As Composer) x.Name = search)
+            If toDelete IsNot Nothing Then
+                _db.Entry(toDelete).State = EntityState.Deleted
+            End If
             Await _db.SaveChangesAsync()
         End Function
 

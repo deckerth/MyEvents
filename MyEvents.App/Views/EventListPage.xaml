@@ -11,6 +11,8 @@
     xmlns:telerikInput="using:Telerik.UI.Xaml.Controls.Input"
     xmlns:telerikCore="using:Telerik.Data.Core"
     xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
+    xmlns:controls="using:MyEvents.App.UserControls"
+    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -67,7 +69,7 @@
 
             <AppBarButton x:Name="DuplicateEvent"
                     Click="DuplicateEvent_Click"
-                    IsEnabled="{x:Bind converter:BooleanOperator.OpNot(ViewModel.Progress.Active),Mode=OneWay}"
+                    IsEnabled="{x:Bind converter:BooleanOperator.OpNotAndEqual1(ViewModel.Progress.Active,ViewModel.SelectedItems.Count),Mode=OneWay}"
                     x:Uid="DuplicateEventButton">
                 <AppBarButton.Icon>
                     <PathIcon Data="F0 M0,5 h1 v14 h-1 v-14 h3 v1 h-3 v-1 M0,18 h13 v1 h-13 v-1 M12,16 h1 v3 h-1 v-3 M5,0 h1 v15 h-1 v-15 h13 v1 h-13 v-1 M17,0 h1 v15 h-1 v-15 M5,14 h13 v1 h-13 v-1 M8,7 h7 v1 h-7 v-1 M11,4 h1 v7 h-1 v-7" />
@@ -76,14 +78,14 @@
 
             <AppBarButton x:Name="EditEvent"
                     Click="EditEvent_Click"
-                    IsEnabled="{x:Bind converter:BooleanOperator.OpNot(ViewModel.Progress.Active),Mode=OneWay}"
+                    IsEnabled="{x:Bind converter:BooleanOperator.OpNotAndGreater0(ViewModel.Progress.Active,ViewModel.SelectedItems.Count),Mode=OneWay}"
                     x:Uid="EditEventButton"
                     Icon="Edit"
                     />
 
             <AppBarButton x:Name="DeleteEvent"
                     Command="{x:Bind ViewModel.DeleteEventCommand,Mode=OneWay}"
-                    IsEnabled="{x:Bind converter:BooleanOperator.OpNot(ViewModel.Progress.Active),Mode=OneWay}"
+                    IsEnabled="{x:Bind converter:BooleanOperator.OpNotAndGreater0(ViewModel.Progress.Active,ViewModel.SelectedItems.Count),Mode=OneWay}"
                     x:Uid="DeleteEventButton"
                     Icon="Delete"
                     />
@@ -175,6 +177,19 @@
                           Command="{x:Bind ViewModel.DeselectAllCommand}"
                        />
 
+            <AppBarButton x:Name="SortOrder"
+                          x:Uid="SortOrder"
+                          Icon="Sort">
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="SortOrderComposerWork" x:Uid="SortOrderComposerWork" 
+                                        Command="{x:Bind ViewModel.SortComposerWorkCommand, Mode=OneWay}"/>
+                        <MenuFlyoutItem x:Name="SortOrderReset" x:Uid="SortOrderReset" 
+                                        Command="{x:Bind ViewModel.ResetSortingCommand, Mode=OneWay}"/>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+
             <TextBlock x:Name="DebugText" Text="{x:Bind ViewModel.LogText,Mode=OneWay}" Visibility="Collapsed"/>
 
         </StackPanel>
@@ -193,6 +208,11 @@
                 AutoGenerateColumns="False"
                 SelectionMode="{x:Bind ViewModel.MultipleSelectionMode,Converter={StaticResource booleanSelModeConverter},Mode=OneWay}"
                 >
+
+            <telerikGrid:RadDataGrid.SortDescriptors>
+                <telerikCore:PropertySortDescriptor PropertyName="Composer"/>
+                <telerikCore:PropertySortDescriptor PropertyName="Work"/>
+            </telerikGrid:RadDataGrid.SortDescriptors>
 
             <telerikGrid:RadDataGrid.Commands >
                 <local:CustomCommitEditCommand />
@@ -216,11 +236,18 @@
                     </local:ComposerDataTemplateSelector.DisplayTemplate>
                     <local:ComposerDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
+                            <!--<telerikInput:RadAutoCompleteBox
                                     Width="300"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Composer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextChanged="OnComposer_TextChanged"/>
+                                    TextChanged="OnComposer_TextChanged"/>-->
+                            <controls:AdvancedAutoSuggestBox
+                                Width="300"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind Composer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextChanged="OnComposer_TextChanged"
+                                    DeleteSuggestion="OnComposer_DeleteSuggestion"
+                                />
                         </DataTemplate>
                     </local:ComposerDataTemplateSelector.EditTemplate>
                 </local:ComposerDataTemplateSelector>
@@ -238,11 +265,17 @@
                     </local:DirectorDataTemplateSelector.DisplayTemplate>
                     <local:DirectorDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
+                            <!--<telerikInput:RadAutoCompleteBox
                                     Width="300"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Director, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextChanged="OnDirector_TextChanged"/>
+                                    TextChanged="OnDirector_TextChanged"/>-->
+                            <controls:AdvancedAutoSuggestBox
+                                    Width="300"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind Director, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextChanged="OnDirector_TextChanged"
+                                    DeleteSuggestion="OnDirector_DeleteSuggestion" />
                         </DataTemplate>
                     </local:DirectorDataTemplateSelector.EditTemplate>
                 </local:DirectorDataTemplateSelector>
@@ -260,11 +293,15 @@
                     </local:SoloistDataTemplateSelector.DisplayTemplate>
                     <local:SoloistDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
-                                    Width="300"
-                                    VerticalAlignment="Center"                                
-                                    Text="{x:Bind Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextChanged="OnSoloist_TextChanged"/>
+                            <!--<telerikInput:RadAutoCompleteBox 
+                                     Width="300"
+                                     VerticalAlignment="Center"                                
+                                     Text="{x:Bind Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
+                            <TextBox
+                                     Width="300"
+                                     VerticalAlignment="Center"                                
+                                     Text="{x:Bind Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                />
                         </DataTemplate>
                     </local:SoloistDataTemplateSelector.EditTemplate>
                 </local:SoloistDataTemplateSelector>
@@ -280,13 +317,20 @@
                                    VerticalAlignment="Center"/>
                         </DataTemplate>
                     </local:VenueDataTemplateSelector.DisplayTemplate>
+                    
                     <local:VenueDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
+                            <!--<telerikInput:RadAutoCompleteBox
                                     Width="300"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Venue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextChanged="OnVenue_TextChanged"/>
+                                    TextChanged="OnVenue_TextChanged"/>-->
+                            <controls:AdvancedAutoSuggestBox
+                                    Width="300"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind Venue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextChanged="OnVenue_TextChanged"
+                                    DeleteSuggestion="OnVenue_DeleteSuggestion"/>
                         </DataTemplate>
                     </local:VenueDataTemplateSelector.EditTemplate>
                 </local:VenueDataTemplateSelector>
@@ -304,11 +348,16 @@
                     </local:PerformerDataTemplateSelector.DisplayTemplate>
                     <local:PerformerDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
+                            <!--<telerikInput:RadAutoCompleteBox
                                     Width="300"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Contributors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextChanged="OnPerformer_TextChanged"/>
+                                    />-->
+                            <TextBox
+                                    Width="300"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind Contributors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    />
                         </DataTemplate>
                     </local:PerformerDataTemplateSelector.EditTemplate>
                 </local:PerformerDataTemplateSelector>
@@ -326,11 +375,38 @@
                     </local:PerformanceDateDataTemplateSelector.DisplayTemplate>
                     <local:PerformanceDateDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
-                                    Width="100"
+                            <!--<telerikInput:RadAutoCompleteBox
+                                    Width="150"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind PerformanceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    TextChanged="OnPerformer_TextChanged"/>
+                                    />-->
+                            <TextBox
+                                    Width="150"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind PerformanceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    />
+                        </DataTemplate>
+                    </local:PerformanceDateDataTemplateSelector.EditTemplate>
+                </local:PerformanceDateDataTemplateSelector>
+
+                <local:PerformanceDateDataTemplateSelector x:Key="WorkDataTemplateSelector">
+                    <local:PerformanceDateDataTemplateSelector.DisplayTemplate>
+                        <DataTemplate x:DataType="viewModels:EventViewModel">
+                            <TextBlock
+                                Width="100"
+                                Text="{x:Bind Work, Mode=OneWay}"
+                                TextWrapping="WrapWholeWords"
+                                Padding="0,5"
+                                VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </local:PerformanceDateDataTemplateSelector.DisplayTemplate>
+                    <local:PerformanceDateDataTemplateSelector.EditTemplate>
+                        <DataTemplate x:DataType="viewModels:EventViewModel">
+                            <TextBox
+                                    Width="150"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind Work, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    />
                         </DataTemplate>
                     </local:PerformanceDateDataTemplateSelector.EditTemplate>
                 </local:PerformanceDateDataTemplateSelector>
@@ -348,7 +424,12 @@
                     </local:CountryDataTemplateSelector.DisplayTemplate>
                     <local:CountryDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <telerikInput:RadAutoCompleteBox
+                            <!--<telerikInput:RadAutoCompleteBox
+                                    Width="300"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind PerformanceCountry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextChanged="OnCountry_TextChanged"/>-->
+                            <controls:AdvancedAutoSuggestBox
                                     Width="300"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind PerformanceCountry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -361,7 +442,7 @@
 
             <telerikGrid:RadDataGrid.Columns>
                 <telerikGrid:DataGridComboBoxColumn x:Uid="EventType" PropertyName="EventDescriptor" DisplayMemberPath="Name" Width="100"
-                                                    ItemsSource="{x:Bind ViewModel.SelectedEvent.AllEventTypes}" 
+                                                    ItemsSource="{x:Bind ViewModel.SelectedEvent.AllEventTypes, Mode=OneWay}" 
                                                     uc:ColumnMarker.RequiresCustomFiltering="True"
                                                     uc:ColumnMarker.ColumnName="EventTypeDescriptor"/>
 
@@ -378,7 +459,7 @@
                     </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
                 </telerikGrid:DataGridTemplateColumn>
 
-                <telerikGrid:DataGridTextColumn x:Uid="Work" PropertyName="Work" SizeMode="Fixed" Width="300">
+                <!--<telerikGrid:DataGridTextColumn x:Uid="Work" PropertyName="Work" SizeMode="Fixed" Width="300">
                     <telerikGrid:DataGridTextColumn.CellContentStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FontWeight" Value="Bold"/>
@@ -387,7 +468,20 @@
                             <Setter Property="Padding" Value="0,5"/>
                         </Style>
                     </telerikGrid:DataGridTextColumn.CellContentStyle>
-                </telerikGrid:DataGridTextColumn>
+                </telerikGrid:DataGridTextColumn>-->
+
+                <telerikGrid:DataGridTemplateColumn x:Name="Work" x:Uid="Work" 
+                                                    CellContentTemplateSelector="{StaticResource WorkDataTemplateSelector}" 
+                                                    CanUserSort="True"
+                                                    uc:ColumnMarker.RequiresCustomFiltering="True"
+                                                    uc:ColumnMarker.ColumnName="Work">
+                    <telerikGrid:DataGridTemplateColumn.SortDescriptor>
+                        <telerikCore:PropertySortDescriptor PropertyName="Work"/>
+                    </telerikGrid:DataGridTemplateColumn.SortDescriptor>
+                    <telerikGrid:DataGridTemplateColumn.GroupDescriptor>
+                        <telerikCore:PropertyGroupDescriptor PropertyName="Work"/>
+                    </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
+                </telerikGrid:DataGridTemplateColumn>
 
                 <telerikGrid:DataGridTemplateColumn x:Name="Director" x:Uid="Director" 
                                                     CellContentTemplateSelector="{StaticResource DirectorDataTemplateSelector}" 

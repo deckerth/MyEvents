@@ -19,9 +19,11 @@ Namespace Global.MyEvents.Repository
         ' Adds a new Country if it does not exist
         Function Insert(Country As Country) As Task
 
+        ' Deletes the entry the given name. 
+        Function DeleteAsyncExact(search As String) As Task
+
         ' Clears the database
         Function ClearAsync() As Task
-
     End Interface
 
 End Namespace
