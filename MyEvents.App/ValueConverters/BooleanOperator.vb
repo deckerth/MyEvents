@@ -25,6 +25,14 @@
             Return Not String.IsNullOrEmpty(a)
         End Function
 
+        Public Shared Function OpEqual1AndNotInitial(a As Integer, b As String) As Boolean
+            Return a = 1 AndAlso Not String.IsNullOrEmpty(b)
+        End Function
+
+        Public Shared Function OpEqual1And(a As Integer, b As Boolean) As Boolean
+            Return a = 1 AndAlso b
+        End Function
+
         Public Shared Function OpNotAndGreater0(a As Object, b As Integer) As Boolean
             Return a IsNot Nothing AndAlso b > 0
         End Function

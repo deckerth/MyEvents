@@ -40,7 +40,7 @@ Namespace Global.MyEvents.App.ViewModels
 
         Private _isNewEvent As Boolean = False
         ' <summary>
-        ' Indicates whether this Is a New book. 
+        ' Indicates whether this Is a new event. 
         ' </summary>
         Public Property IsNewEvent As Boolean
             Get
@@ -48,6 +48,19 @@ Namespace Global.MyEvents.App.ViewModels
             End Get
             Set(value As Boolean)
                 SetProperty(Of Boolean)(_isNewEvent, value)
+            End Set
+        End Property
+
+        Private _isNewPlannedEvent As Boolean = False
+        ' <summary>
+        ' Indicates whether this Is a new planned event. 
+        ' </summary>
+        Public Property IsNewPlannedEvent As Boolean
+            Get
+                Return _isNewPlannedEvent
+            End Get
+            Set(value As Boolean)
+                SetProperty(Of Boolean)(_isNewPlannedEvent, value)
             End Set
         End Property
 

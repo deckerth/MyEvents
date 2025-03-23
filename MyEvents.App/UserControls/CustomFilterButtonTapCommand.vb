@@ -1,5 +1,6 @@
 ﻿Imports Telerik.Data.Core
 Imports Telerik.UI.Xaml.Controls.Grid.Commands
+Imports Telerik.UI.Xaml.Controls.Grid.Primitives
 
 Namespace Global.MyEvents.App.UserControls
 
@@ -24,16 +25,24 @@ Namespace Global.MyEvents.App.UserControls
                     If TypeOf (context.AssociatedDescriptor) Is CompositeFilterDescriptor Then
                         firstFilter = DirectCast(context.AssociatedDescriptor, CompositeFilterDescriptor).Descriptors.Item(0)
                         secondFilter = DirectCast(context.AssociatedDescriptor, CompositeFilterDescriptor).Descriptors.Item(1)
-                    Else
+                    ElseIf TypeOf (context.AssociatedDescriptor) Is DelegateFilterDescriptor Then
                         firstFilter = DirectCast(context.AssociatedDescriptor, DelegateFilterDescriptor)
+                    Else
+                        firstFilter = DirectCast(context.AssociatedDescriptor, TextFilterDescriptor)
                     End If
                 End If
 
                 Dim columnName = ColumnMarker.GetColumnName(context.Column)
-                context.FirstFilterControl = New TextChoiceFilterControl(firstFilter, columnName) With {.DataContext = firstFilter}
+                If ColumnMarker.GetIsTextFilter(context.Column) Then
+                    Dim textFilter = New DataGridTextFilterControl With {
+                        .DataContext = firstFilter,
+                        .PropertyName = columnName
+                    }
+                    context.FirstFilterControl = textFilter
+                Else
+                    context.FirstFilterControl = New TextChoiceFilterControl(firstFilter, columnName) With {.DataContext = firstFilter}
+                End If
                 context.SecondFilterControl = Nothing
-                'context.FirstFilterControl = New TextFilterControl(firstFilter, ColumnMarker.GetColumnName(context.Column)) With {.DataContext = firstFilter}
-                'context.SecondFilterControl = New TextFilterControl(secondFilter, ColumnMarker.GetColumnName(context.Column)) With {.DataContext = secondFilter}
             End If
 
             Me.Owner.CommandService.ExecuteDefaultCommand(CommandId.FilterButtonTap, context)

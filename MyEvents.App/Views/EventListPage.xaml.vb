@@ -198,6 +198,22 @@ Namespace Global.MyEvents.App.Views
         End Function
     End Class
 
+    Public Class LinkDataTemplateSelector
+        Inherits DataTemplateSelector
+
+        Public Property EditTemplate As DataTemplate
+        Public Property DisplayTemplate As DataTemplate
+
+        Protected Overrides Function SelectTemplateCore(item As Object, container As DependencyObject) As DataTemplate
+            Dim row = DirectCast(item, EventViewModel)
+            If row.IsInEdit Then
+                Return EditTemplate
+            Else
+                Return DisplayTemplate
+            End If
+        End Function
+    End Class
+
     Public Class PerformanceDateIKeyLookup
         Implements IKeyLookup
 
@@ -290,7 +306,21 @@ Namespace Global.MyEvents.App.Views
             End If
         End Sub
 
-        Private Sub EventSearchBox_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
+        Private Async Function ClearFilter() As Task
+            If ViewModel.FilterIsSet Then
+                ViewModel.FilterIsSet = False
+                If ViewModel.IsBackupValid() Then
+                    _dispatcherQueue.TryEnqueue(Sub() ViewModel.RestoreBackup())
+                Else
+                    _dispatcherQueue.TryEnqueue(Async Function()
+                                                    Await ViewModel.GetEventsListAsync()
+                                                End Function)
+                    Await ViewModel.Progress.HideAsync()
+                End If
+            End If
+        End Function
+
+        Private Async Sub EventSearchBox_TextChanged(sender As AutoSuggestBox, args As AutoSuggestBoxTextChangedEventArgs)
             ' We only want to get results when it was a user typing,
             ' otherwise we assume the value got filled in by TextMemberPath
             ' Or the handler for SuggestionChosen.
@@ -300,6 +330,7 @@ Namespace Global.MyEvents.App.Views
                     '                                                  Await ViewModel.GetBooksListAsync()
                     '                                              End Function)
                     sender.ItemsSource = Nothing
+                    Await ClearFilter()
                 Else
                     Dim parameters As String() = sender.Text.Split({" ", ",", ":", ";"}, StringSplitOptions.RemoveEmptyEntries)
                     sender.ItemsSource = ViewModel.Events.Where(
@@ -324,17 +355,7 @@ Namespace Global.MyEvents.App.Views
 
         Private Async Sub EventSearchBox_QuerySubmitted(sender As AutoSuggestBox, args As AutoSuggestBoxQuerySubmittedEventArgs)
             If String.IsNullOrEmpty(args.QueryText) Then
-                If ViewModel.FilterIsSet Then
-                    ViewModel.FilterIsSet = False
-                    If ViewModel.IsBackupValid() Then
-                        _dispatcherQueue.TryEnqueue(Sub() ViewModel.RestoreBackup())
-                    Else
-                        _dispatcherQueue.TryEnqueue(Async Function()
-                                                        Await ViewModel.GetEventsListAsync()
-                                                    End Function)
-                        Await ViewModel.Progress.HideAsync()
-                    End If
-                End If
+                Await ClearFilter()
             Else
                 Dim parameters As String() = args.QueryText.Split({" ", ",", ":", ";"}, StringSplitOptions.RemoveEmptyEntries)
                 Dim matches = ViewModel.Events.Where(
@@ -472,6 +493,10 @@ Namespace Global.MyEvents.App.Views
             DataGrid.DeselectAll()
         End Sub
 
+        Private Sub DataGrid_SelectionChanged(sender As Object, e As DataGridSelectionChangedEventArgs)
+            ViewModel.DataGrid_SelectionChanged()
+        End Sub
+
 #Region "Sorting"
         Private Sub OnResetSorting()
             DataGrid.SortDescriptors.Clear()
@@ -494,7 +519,6 @@ Namespace Global.MyEvents.App.Views
         Private Sub AdvancedAutoSuggestBox_DeleteSuggestion_2(sender As UserControls.AdvancedAutoSuggestBox, e As UserControls.AdvancedAutoSuggestBoxDeleteSuggestionArgs)
 
         End Sub
-
 
 #End Region
     End Class

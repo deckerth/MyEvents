@@ -15,7 +15,7 @@ Namespace Global.MyEvents.App.Views
         End Sub
 
         Private Sub CreateEvent_Click(sender As Object, e As RoutedEventArgs)
-            Frame.Navigate(GetType(EventDetailPage))
+            Frame.Navigate(GetType(EventDetailPage), True)
         End Sub
 
         Private Sub PlannedEventsGrid_ItemClick(sender As Object, e As ItemClickEventArgs)

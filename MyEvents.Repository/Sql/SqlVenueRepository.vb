@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Venue)) Implements IVenueRepository.GetAsync
 
-            Return Await _db.Venues.AsNoTracking().Where(Function(x As Venue) x.Name.Contains(search)).ToListAsync()
+            Return Await _db.Venues.AsNoTracking().Where(Function(x As Venue) x.Name.ToLowerInvariant.Contains(search.ToLowerInvariant)).ToListAsync()
 
         End Function
 

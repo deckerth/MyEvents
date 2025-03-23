@@ -94,7 +94,7 @@
                            ItemsSource="{x:Bind ViewModel.Performance.AllEventTypes,Mode=OneWay}"
                            ItemTemplate="{StaticResource EventTypeTemplate}"
                            SelectedItem="{x:Bind ViewModel.Performance.EventDescriptor,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                           IsEnabled="{x:Bind ViewModel.IsInEdit, Mode=OneWay}"
+                           IsEnabled="{x:Bind converters:BooleanOperator.OpAndNot(ViewModel.IsInEdit, ViewModel.IsNewPlannedEvent), Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.MultipleEvents,Converter={StaticResource boolToVisConverter},ConverterParameter=true,Mode=OneWay}"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True"/>

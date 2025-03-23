@@ -95,6 +95,16 @@ Namespace Global.MyEvents.App.ViewModels
             End Set
         End Property
 
+        Private _linkIsValid As Boolean = False
+        Public Property LinkIsValid As Boolean
+            Get
+                Return _linkIsValid
+            End Get
+            Set(value As Boolean)
+                SetProperty(Of Boolean)(_linkIsValid, value)
+            End Set
+        End Property
+
         Private _selectedEvent As EventViewModel
         Public Property SelectedEvent As EventViewModel
             Get
@@ -102,7 +112,7 @@ Namespace Global.MyEvents.App.ViewModels
             End Get
             Set(value As EventViewModel)
                 SetProperty(Of EventViewModel)(_selectedEvent, value, "SelectedEvent")
-                OnPropertyChanged("SelectedEvent.Link")
+                LinkIsValid = _selectedEvent IsNot Nothing AndAlso Not String.IsNullOrEmpty(_selectedEvent.Link)
             End Set
         End Property
 
@@ -134,7 +144,15 @@ Namespace Global.MyEvents.App.ViewModels
 
         Public Property Progress As New ProgressRingViewModel
 
-        Public Property FilterIsSet As Boolean = False
+        Private _filterIsSet As Boolean = False
+        Public Property FilterIsSet As Boolean
+            Get
+                Return _filterIsSet
+            End Get
+            Set(value As Boolean)
+                SetProperty(Of Boolean)(_filterIsSet, value)
+            End Set
+        End Property
 #End Region
 
 #Region "FullListBackup"
@@ -173,7 +191,16 @@ Namespace Global.MyEvents.App.ViewModels
             EnableSingleSelectionModeCommand = New RelayCommand(AddressOf OnEnableSingleSelectionMode)
         End Sub
 
+        Private _selectedItems As ObservableCollection(Of Object)
         Public Property SelectedItems As ObservableCollection(Of Object)
+            Get
+                Return _selectedItems
+            End Get
+            Set(value As ObservableCollection(Of Object))
+                _selectedItems = value
+                DataGrid_SelectionChanged()
+            End Set
+        End Property
 
         Public Event SelectAll()
         Public Event DeselectAll()
@@ -477,6 +504,15 @@ Namespace Global.MyEvents.App.ViewModels
 
             Await Progress.HideAsync()
         End Function
+
+        Friend Sub DataGrid_SelectionChanged()
+            OnPropertyChanged("SelectedItems")
+            If SelectedItems.Count = 1 Then
+                SelectedEvent = SelectedItems.ElementAt(0)
+                'Else
+                '    SelectedEvent = Nothing
+            End If
+        End Sub
 
 #End Region
 

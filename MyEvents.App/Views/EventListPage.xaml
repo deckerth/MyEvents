@@ -34,7 +34,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="290"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -99,7 +99,7 @@
                     />
 
             <AppBarButton Icon="Globe"
-                    IsEnabled="{x:Bind converter:BooleanOperator.OpIsNotInitial(ViewModel.SelectedEvent.Link),Mode=OneWay}"
+                    IsEnabled="{x:Bind converter:BooleanOperator.OpEqual1And(ViewModel.SelectedItems.Count,ViewModel.LinkIsValid),Mode=OneWay}"
                     Command="{x:Bind ViewModel.SelectedEvent.OpenLinkCommand,Mode=OneWay}"/>
             
             <CommandBar.SecondaryCommands>
@@ -117,7 +117,18 @@
             </CommandBar.SecondaryCommands>
         </CommandBar>
 
-        <AutoSuggestBox
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="FilterIndicator"
+                    Visibility="{x:Bind ViewModel.FilterIsSet, Converter={StaticResource booleanVisConverter}, Mode=OneWay}"
+                    Background="{ThemeResource NavMenuAccentForegroundColor}" BorderThickness="0" 
+                    CornerRadius="3"
+                    Margin="0,6,-10,0" 
+                    Width="3" Height="18" HorizontalAlignment="Right"/>
+            <AutoSuggestBox
                 Grid.Row="0"
                 Grid.Column="1"
                 x:Name="EventSearchBox"
@@ -129,6 +140,7 @@
                 QueryIcon="Filter"
                 TextChanged="EventSearchBox_TextChanged"
                 QuerySubmitted="EventSearchBox_QuerySubmitted"/>
+        </Grid>
 
         <Grid   Grid.Row="1"
                 Grid.ColumnSpan="2"
@@ -207,7 +219,7 @@
                 UserEditMode="Inline"
                 AutoGenerateColumns="False"
                 SelectionMode="{x:Bind ViewModel.MultipleSelectionMode,Converter={StaticResource booleanSelModeConverter},Mode=OneWay}"
-                >
+                SelectionChanged="DataGrid_SelectionChanged">
 
             <telerikGrid:RadDataGrid.SortDescriptors>
                 <telerikCore:PropertySortDescriptor PropertyName="Composer"/>
@@ -297,7 +309,7 @@
                                      Width="300"
                                      VerticalAlignment="Center"                                
                                      Text="{x:Bind Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
-                            <TextBox
+                            <AutoSuggestBox
                                      Width="300"
                                      VerticalAlignment="Center"                                
                                      Text="{x:Bind Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -317,7 +329,6 @@
                                    VerticalAlignment="Center"/>
                         </DataTemplate>
                     </local:VenueDataTemplateSelector.DisplayTemplate>
-                    
                     <local:VenueDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
                             <!--<telerikInput:RadAutoCompleteBox
@@ -353,7 +364,7 @@
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Contributors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     />-->
-                            <TextBox
+                            <AutoSuggestBox
                                     Width="300"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Contributors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -380,7 +391,7 @@
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind PerformanceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     />-->
-                            <TextBox
+                            <AutoSuggestBox
                                     Width="150"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind PerformanceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -389,8 +400,8 @@
                     </local:PerformanceDateDataTemplateSelector.EditTemplate>
                 </local:PerformanceDateDataTemplateSelector>
 
-                <local:PerformanceDateDataTemplateSelector x:Key="WorkDataTemplateSelector">
-                    <local:PerformanceDateDataTemplateSelector.DisplayTemplate>
+                <local:WorkDataTemplateSelector x:Key="WorkDataTemplateSelector">
+                    <local:WorkDataTemplateSelector.DisplayTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
                             <TextBlock
                                 Width="100"
@@ -399,17 +410,39 @@
                                 Padding="0,5"
                                 VerticalAlignment="Center"/>
                         </DataTemplate>
-                    </local:PerformanceDateDataTemplateSelector.DisplayTemplate>
-                    <local:PerformanceDateDataTemplateSelector.EditTemplate>
+                    </local:WorkDataTemplateSelector.DisplayTemplate>
+                    <local:WorkDataTemplateSelector.EditTemplate>
                         <DataTemplate x:DataType="viewModels:EventViewModel">
-                            <TextBox
+                            <AutoSuggestBox
                                     Width="150"
                                     VerticalAlignment="Center"                                
                                     Text="{x:Bind Work, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     />
                         </DataTemplate>
-                    </local:PerformanceDateDataTemplateSelector.EditTemplate>
-                </local:PerformanceDateDataTemplateSelector>
+                    </local:WorkDataTemplateSelector.EditTemplate>
+                </local:WorkDataTemplateSelector>
+
+                <local:LinkDataTemplateSelector x:Key="LinkDataTemplateSelector">
+                    <local:LinkDataTemplateSelector.DisplayTemplate>
+                        <DataTemplate x:DataType="viewModels:EventViewModel">
+                            <TextBlock
+                                Width="100"
+                                Text="{x:Bind Link, Mode=OneWay}"
+                                TextWrapping="WrapWholeWords"
+                                Padding="0,5"
+                                VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </local:LinkDataTemplateSelector.DisplayTemplate>
+                    <local:LinkDataTemplateSelector.EditTemplate>
+                        <DataTemplate x:DataType="viewModels:EventViewModel">
+                            <AutoSuggestBox
+                                    Width="150"
+                                    VerticalAlignment="Center"                                
+                                    Text="{x:Bind Link, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    />
+                        </DataTemplate>
+                    </local:LinkDataTemplateSelector.EditTemplate>
+                </local:LinkDataTemplateSelector>
 
                 <local:CountryDataTemplateSelector x:Key="CountryDataTemplateSelector">
                     <local:CountryDataTemplateSelector.DisplayTemplate>
@@ -474,7 +507,8 @@
                                                     CellContentTemplateSelector="{StaticResource WorkDataTemplateSelector}" 
                                                     CanUserSort="True"
                                                     uc:ColumnMarker.RequiresCustomFiltering="True"
-                                                    uc:ColumnMarker.ColumnName="Work">
+                                                    uc:ColumnMarker.ColumnName="Work"
+                                                    uc:ColumnMarker.IsTextFilter="True">
                     <telerikGrid:DataGridTemplateColumn.SortDescriptor>
                         <telerikCore:PropertySortDescriptor PropertyName="Work"/>
                     </telerikGrid:DataGridTemplateColumn.SortDescriptor>
@@ -482,6 +516,11 @@
                         <telerikCore:PropertyGroupDescriptor PropertyName="Work"/>
                     </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
                 </telerikGrid:DataGridTemplateColumn>
+
+                <!--<telerikGrid:DataGridTemplateColumn x:Name="Work" x:Uid="Work" 
+                                                    CellContentTemplateSelector="{StaticResource WorkDataTemplateSelector}" 
+                                                    CanUserSort="True">
+                </telerikGrid:DataGridTemplateColumn>-->
 
                 <telerikGrid:DataGridTemplateColumn x:Name="Director" x:Uid="Director" 
                                                     CellContentTemplateSelector="{StaticResource DirectorDataTemplateSelector}" 
@@ -513,7 +552,7 @@
                                                     CellContentTemplateSelector="{StaticResource PerformerDataTemplateSelector}" 
                                                     CanUserSort="True"
                                                     uc:ColumnMarker.RequiresCustomFiltering="True"
-                                                    uc:ColumnMarker.ColumnName="Performer">
+                                                    uc:ColumnMarker.ColumnName="Contributors">
                     <telerikGrid:DataGridTemplateColumn.SortDescriptor>
                         <telerikCore:PropertySortDescriptor PropertyName="Contributors"/>
                     </telerikGrid:DataGridTemplateColumn.SortDescriptor>
@@ -561,7 +600,7 @@
                     </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
                 </telerikGrid:DataGridTemplateColumn>
 
-                <telerikGrid:DataGridTextColumn x:Uid="Link" PropertyName="Link" SizeMode="Fixed" Width="300">
+                <!--<telerikGrid:DataGridTextColumn x:Uid="Link" PropertyName="Link" SizeMode="Fixed" Width="300">
                     <telerikGrid:DataGridTextColumn.CellContentStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="TextWrapping" Value="WrapWholeWords"/>
@@ -569,7 +608,21 @@
                             <Setter Property="Padding" Value="0,5"/>
                         </Style>
                     </telerikGrid:DataGridTextColumn.CellContentStyle>
-                </telerikGrid:DataGridTextColumn>
+                </telerikGrid:DataGridTextColumn>-->
+
+                <telerikGrid:DataGridTemplateColumn x:Name="Link" x:Uid="Link" 
+                                                    CellContentTemplateSelector="{StaticResource LinkDataTemplateSelector}" 
+                                                    CanUserSort="True"
+                                                    uc:ColumnMarker.RequiresCustomFiltering="True"
+                                                    uc:ColumnMarker.ColumnName="Link"
+                                                    uc:ColumnMarker.IsTextFilter="True">
+                    <telerikGrid:DataGridTemplateColumn.SortDescriptor>
+                        <telerikCore:PropertySortDescriptor PropertyName="Link"/>
+                    </telerikGrid:DataGridTemplateColumn.SortDescriptor>
+                    <telerikGrid:DataGridTemplateColumn.GroupDescriptor>
+                        <telerikCore:PropertyGroupDescriptor PropertyName="Link"/>
+                    </telerikGrid:DataGridTemplateColumn.GroupDescriptor>
+                </telerikGrid:DataGridTemplateColumn>
 
             </telerikGrid:RadDataGrid.Columns>
 

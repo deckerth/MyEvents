@@ -125,6 +125,9 @@ Namespace Global.MyEvents.App.UserControls
             SuggestedTokens = New AdvancedCollectionView(Suggestions) With {
             .Filter = Function(item As Object) As Boolean
                           Dim toCheck = DirectCast(item, Token)
+                          If CurrentInput Is Nothing OrElse CurrentInput.Length = 0 Then
+                              Return False
+                          End If
                           Return toCheck.Text.Contains(CurrentInput, StringComparison.InvariantCultureIgnoreCase)
                       End Function
         }

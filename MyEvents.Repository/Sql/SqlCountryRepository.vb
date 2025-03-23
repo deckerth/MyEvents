@@ -18,9 +18,7 @@ Namespace Global.MyEvents.Repository.Sql
         End Function
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Country)) Implements ICountryRepository.GetAsync
-
-            Return Await _db.Countries.AsNoTracking().Where(Function(x As Country) x.Name.Contains(search)).ToListAsync()
-
+            Return Await _db.Countries.AsNoTracking().Where(Function(x As Country) x.Name.ToLowerInvariant.Contains(search.ToLowerInvariant)).ToListAsync()
         End Function
 
         Public Async Function GetAsyncExact(search As String) As Task(Of Country) Implements ICountryRepository.GetAsyncExact

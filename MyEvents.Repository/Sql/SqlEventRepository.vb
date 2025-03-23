@@ -22,21 +22,21 @@ Namespace Global.MyEvents.Repository.Sql
 
             Dim parameters As String() = search.Split(" ")
             Return Await _db.Events.AsNoTracking().Where(
-                Function(x As Performance) parameters.Any(Function(y As String) x.Composer.Contains(y) Or
-                                                                         x.Contributors.Contains(y) Or
-                                                                         x.Director.Contains(y) Or
-                                                                         x.Performer.Contains(y) Or
-                                                                         x.Venue.Contains(y) Or
-                                                                         x.Work.Contains(y) Or
-                                                                         x.PerformanceCountry.Contains(y))
+                Function(x As Performance) parameters.Any(Function(y As String) x.Composer.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Contributors.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Director.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Performer.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Venue.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Work.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.PerformanceCountry.ToLowerInvariant.Contains(y.ToLowerInvariant))
                 ).OrderByDescending(
-                Function(x As Performance) parameters.Count(Function(y As String) x.Composer.Contains(y) Or
-                                                                         x.Contributors.Contains(y) Or
-                                                                         x.Director.Contains(y) Or
-                                                                         x.Performer.Contains(y) Or
-                                                                         x.Venue.Contains(y) Or
-                                                                         x.Work.Contains(y) Or
-                                                                         x.PerformanceCountry.Contains(y))
+                Function(x As Performance) parameters.Count(Function(y As String) x.Composer.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Contributors.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Director.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Performer.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Venue.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.Work.ToLowerInvariant.Contains(y.ToLowerInvariant) Or
+                                                                         x.PerformanceCountry.ToLowerInvariant.Contains(y.ToLowerInvariant))
                 ).ToListAsync()
 
         End Function

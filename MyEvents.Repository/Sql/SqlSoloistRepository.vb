@@ -18,7 +18,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Soloist)) Implements ISoloistRepository.GetAsync
 
-            Return Await _db.Soloists.AsNoTracking().Where(Function(x As Soloist) x.Name.Contains(search)).ToListAsync()
+            Return Await _db.Soloists.AsNoTracking().Where(Function(x As Soloist) x.Name.ToLowerInvariant.Contains(search.ToLowerInvariant)).ToListAsync()
 
         End Function
 

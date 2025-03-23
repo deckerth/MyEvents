@@ -30,6 +30,20 @@
                                             GetType(ColumnMarker),
                                             New PropertyMetadata(""))
 
+        Public Shared Function GetIsTextFilter(obj As DependencyObject) As Boolean
+            Return obj.GetValue(IsTextFilterProperty)
+        End Function
+
+        Public Shared Sub SetIsTextFilter(obj As DependencyObject, value As Boolean)
+            obj.SetValue(IsTextFilterProperty, value)
+        End Sub
+
+        Public Shared ReadOnly Property IsTextFilterProperty As DependencyProperty =
+           DependencyProperty.RegisterAttached("IsTextFilter",
+                                            GetType(Boolean),
+                                            GetType(ColumnMarker),
+                                            New PropertyMetadata(False))
+
     End Class
 
 End Namespace

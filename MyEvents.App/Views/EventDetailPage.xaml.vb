@@ -46,6 +46,15 @@ Namespace Global.MyEvents.App.Views
             If e.Parameter IsNot Nothing Then
                 If TypeOf e.Parameter Is MultipleEventsViewModel Then
                     ViewModel = New EventDetailPageViewModel(e.Parameter)
+                ElseIf TypeOf e.Parameter Is Boolean Then
+                    ' Invocation from page "Planned events" -> Create new planned event
+                    ViewModel = New EventDetailPageViewModel With {
+                    .IsNewEvent = True,
+                    .IsNewPlannedEvent = True,
+                    .Performance = New EventViewModel(New Performance(Performance.PerformanceType.Planned)) With {.Validate = True}
+                }
+                    Bindings.Update()
+                    PageHeaderText.Text = App.Texts.GetString("NewPlannedEvent")
                 Else
                     Dim performance As EventViewModel = DirectCast(e.Parameter, EventViewModel)
                     If ViewModel Is Nothing OrElse Not ViewModel.Performance.Equals(performance) Then

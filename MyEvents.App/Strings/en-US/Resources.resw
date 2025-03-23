@@ -498,4 +498,7 @@
   <data name="SortOrderReset.Text" xml:space="preserve">
     <value>Reset sorting</value>
   </data>
+  <data name="NewPlannedEvent" xml:space="preserve">
+    <value>New planned event</value>
+  </data>
 </root>

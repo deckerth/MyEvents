@@ -21,6 +21,10 @@
 
         End Sub
 
+        Public Sub New(perfType As PerformanceType)
+            Type = perfType
+        End Sub
+
         Private Shared _newPerformanceId As Guid = Guid.NewGuid()
 
         Public Shared ReadOnly Property NewPerformanceId As Guid

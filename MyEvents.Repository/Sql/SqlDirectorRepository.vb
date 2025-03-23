@@ -19,7 +19,7 @@ Namespace Global.MyEvents.Repository.Sql
 
         Public Async Function GetAsync(search As String) As Task(Of IEnumerable(Of Director)) Implements IDirectorRepository.GetAsync
 
-            Return Await _db.Directors.AsNoTracking().Where(Function(x As Director) x.Name.Contains(search)).ToListAsync()
+            Return Await _db.Directors.AsNoTracking().Where(Function(x As Director) x.Name.ToLowerInvariant.Contains(search.ToLowerInvariant)).ToListAsync()
 
             'Dim parameters As String() = search.Split(" ")
             'Return Await _db.Directors.Where(
